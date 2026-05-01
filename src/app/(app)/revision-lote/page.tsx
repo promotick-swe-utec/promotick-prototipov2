@@ -737,6 +737,7 @@ function ErroresTab({
 export default function RevisionLotePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("new");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [confirmedIds, setConfirmedIds] = useState<Set<number>>(new Set());
   const [rejectedIds, setRejectedIds] = useState<Set<number>>(new Set());
 
@@ -1020,7 +1021,7 @@ export default function RevisionLotePage() {
           <button
             type="button"
             disabled={confirmedCount === 0}
-            onClick={() => router.push("/exportar")}
+            onClick={() => setShowSuccessModal(true)}
             className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/30 transition-all hover:bg-brand-700 hover:shadow-brand-600/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
           >
             Confirmar Lote
@@ -1028,6 +1029,39 @@ export default function RevisionLotePage() {
           </button>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl ring-1 ring-black/5">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-7 w-7 text-green-600" />
+            </div>
+            <h3 className="mb-2 text-center text-xl font-bold text-gray-900">
+              ¡Lote confirmado!
+            </h3>
+            <p className="mb-8 text-center text-sm text-gray-500">
+              Los productos del lote se han procesado correctamente. ¿Desea exportar el listado ahora?
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => router.push("/catalogo")}
+                className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
+              >
+                No, ir al catálogo
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/exportar")}
+                className="flex-1 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-brand-600/40"
+              >
+                Sí, exportar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
