@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  /* Promotick brand reds — centered on PANTONE 185 C (#E73137) */
+  --color-brand-50: #FFF1F2;
+  --color-brand-100: #FFE1E2;
+  --color-brand-200: #FFC8C9;
+  --color-brand-300: #FFA0A2;
+  --color-brand-400: #EC2527;
+  --color-brand-500: #E73137;
+  --color-brand-600: #DA1E0B;
+  --color-brand-700: #AF272F;
+  --color-brand-800: #8C2026;
+  --color-brand-900: #6B1A1E;
+
+  /* Surface — from Promotick palette */
+  --color-surface: #FAF9F9;
+  --color-surface-alt: #DFDFDF;
+
+  /* Sidebar — Promotick dark grays */
+  --color-sidebar: #2D2D2D;
+  --color-sidebar-hover: #333333;
+  --color-sidebar-active: #4D4D4D;
+}
+
+body {
+  background-color: var(--color-surface);
+}
+
+/* Shake animation for repeated login errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(5px); }
+  45% { transform: translateX(-4px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+  90% { transform: translateX(-1px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
