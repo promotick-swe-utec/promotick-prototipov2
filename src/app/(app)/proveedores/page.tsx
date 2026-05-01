@@ -9,19 +9,16 @@ import {
   FileText,
   ToggleLeft,
   ToggleRight,
+  Info,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { suppliers, products, type Supplier } from "@/lib/mock-data";
+import Link from "next/link";
 
-/* ------------------------------------------------------------------ */
-/*  Status filter options                                              */
-/* ------------------------------------------------------------------ */
-type StatusFilter = "all" | "active" | "inactive";
-
-const statusFilters: { value: StatusFilter; label: string }[] = [
-  { value: "all", label: "Todos" },
-  { value: "active", label: "Activos" },
-  { value: "inactive", label: "Inactivos" },
-];
+type StatusFilter = "all" | "active" | "inactive" | "preferred";
+type SortConfig = { key: "cargas" | "ultimaCarga" | "estado"; direction: "asc" | "desc" } | null;
 
 /* ------------------------------------------------------------------ */
 /*  Helper: format date to locale                                      */
@@ -71,30 +68,91 @@ function PreferredBadge() {
 export default function ProveedoresPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortConfig, setSortConfig] = useState<SortConfig>(null);
   const [openSupplierId, setOpenSupplierId] = useState<number | null>(null);
+  const [list, setList] = useState<Supplier[]>(suppliers);
+
+  // Form states
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+
+  function handleSort(key: "cargas" | "ultimaCarga" | "estado") {
+    let direction: "asc" | "desc" = "desc";
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "desc") {
+      direction = "asc";
+    }
+    setSortConfig({ key, direction });
+  }
+
+  const getSortIcon = (key: "cargas" | "ultimaCarga" | "estado") => {
+    if (sortConfig?.key !== key) return <ArrowUpDown className="ml-1 h-3 w-3 text-gray-300 transition-colors group-hover:text-gray-400" />;
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3 text-brand-600" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3 text-brand-600" />
+    );
+  };
+
+  function handleToggleActive(id: number) {
+    setList((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, isActive: !s.isActive } : s)),
+    );
+  }
+
+  function openEdit(s: Supplier) {
+    setEditingSupplier(s);
+    setIsFormOpen(true);
+  }
+
+  function openNew() {
+    setEditingSupplier(null);
+    setIsFormOpen(true);
+  }
 
   /* Derived filtered list */
   const filtered = useMemo(() => {
-    let list: Supplier[] = suppliers;
+    let current = [...list];
 
     // Status filter
-    if (statusFilter === "active") list = list.filter((s) => s.isActive);
-    if (statusFilter === "inactive") list = list.filter((s) => !s.isActive);
+    if (statusFilter === "active") current = current.filter((s) => s.isActive);
+    if (statusFilter === "inactive") current = current.filter((s) => !s.isActive);
+    if (statusFilter === "preferred") current = current.filter((s) => s.preferred);
 
     // Search
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter(
+      current = current.filter(
         (s) =>
           s.name.toLowerCase().includes(q) ||
           s.ruc.includes(q) ||
-          s.code.toLowerCase().includes(q) ||
           s.contactEmail.toLowerCase().includes(q),
       );
     }
 
-    return list;
-  }, [search, statusFilter]);
+    // Sort
+    if (sortConfig) {
+      current.sort((a, b) => {
+        if (sortConfig.key === "cargas") {
+          return sortConfig.direction === "asc"
+            ? a.uploadsCount - b.uploadsCount
+            : b.uploadsCount - a.uploadsCount;
+        }
+        if (sortConfig.key === "ultimaCarga") {
+          const da = a.lastUpload ? new Date(a.lastUpload).getTime() : 0;
+          const db = b.lastUpload ? new Date(b.lastUpload).getTime() : 0;
+          return sortConfig.direction === "asc" ? da - db : db - da;
+        }
+        if (sortConfig.key === "estado") {
+          const vA = a.isActive ? 1 : 0;
+          const vB = b.isActive ? 1 : 0;
+          return sortConfig.direction === "asc" ? vB - vA : vA - vB;
+        }
+        return 0;
+      });
+    }
+
+    return current;
+  }, [search, statusFilter, sortConfig, list]);
 
   return (
     <div>
@@ -111,6 +169,7 @@ export default function ProveedoresPage() {
 
         <button
           type="button"
+          onClick={openNew}
           className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
         >
           <Plus className="h-4 w-4" />
@@ -120,7 +179,7 @@ export default function ProveedoresPage() {
 
       {/* ── Search + filters card ── */}
       <div className="mb-6 rounded-xl bg-white p-4 shadow-sm ring-1 ring-black/5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
           {/* Search input */}
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -128,26 +187,26 @@ export default function ProveedoresPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por razón social, RUC, código o email..."
+              placeholder="Buscar por razón social, RUC o email..."
               className="w-full rounded-lg border border-gray-200 bg-surface py-2 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
 
-          {/* Status filter pills */}
-          <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
-            {statusFilters.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => setStatusFilter(f.value)}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${statusFilter === f.value
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-                  }`}
+          {/* Filters */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-500">Mostrar:</span>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+                className="rounded-lg border border-gray-200 bg-white py-2 pl-3 pr-8 text-sm text-gray-700 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
               >
-                {f.label}
-              </button>
-            ))}
+                <option value="all">Todos los estados</option>
+                <option value="active">Activos</option>
+                <option value="inactive">Inactivos</option>
+                <option value="preferred">Preferidos</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -160,11 +219,31 @@ export default function ProveedoresPage() {
               <tr className="border-b border-gray-100 bg-gray-50/60 text-xs font-semibold uppercase tracking-wide text-gray-500">
                 <th className="py-3.5 pl-6 pr-3">Razón Social</th>
                 <th className="px-3 py-3.5">RUC</th>
-                <th className="px-3 py-3.5">Código</th>
                 <th className="px-3 py-3.5">Email</th>
-                <th className="px-3 py-3.5 text-center">Cargas</th>
-                <th className="px-3 py-3.5">Última Carga</th>
-                <th className="px-3 py-3.5 text-center">Estado</th>
+                <th 
+                  className="group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-gray-100 focus:outline-none"
+                  onClick={() => handleSort("cargas")}
+                >
+                  <div className="flex items-center justify-center">
+                    Cargas {getSortIcon("cargas")}
+                  </div>
+                </th>
+                <th 
+                  className="group cursor-pointer select-none px-3 py-3.5 transition-colors hover:bg-gray-100 focus:outline-none"
+                  onClick={() => handleSort("ultimaCarga")}
+                >
+                  <div className="flex items-center">
+                    Última Carga {getSortIcon("ultimaCarga")}
+                  </div>
+                </th>
+                <th 
+                  className="group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-gray-100 focus:outline-none"
+                  onClick={() => handleSort("estado")}
+                >
+                  <div className="flex items-center justify-center">
+                    Estado {getSortIcon("estado")}
+                  </div>
+                </th>
                 <th className="py-3.5 pl-3 pr-6 text-right">Acciones</th>
               </tr>
             </thead>
@@ -173,7 +252,7 @@ export default function ProveedoresPage() {
               {filtered.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={7}
                     className="py-12 text-center text-sm text-gray-400"
                   >
                     No se encontraron proveedores con los filtros aplicados.
@@ -198,13 +277,6 @@ export default function ProveedoresPage() {
                       {/* RUC */}
                       <td className="px-3 py-4 font-mono text-xs text-gray-600">
                         {s.ruc}
-                      </td>
-
-                      {/* Code */}
-                      <td className="px-3 py-4">
-                        <span className="inline-flex rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-                          {s.code}
-                        </span>
                       </td>
 
                       {/* Email */}
@@ -232,20 +304,22 @@ export default function ProveedoresPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             type="button"
+                            onClick={() => openEdit(s)}
                             title="Editar proveedor"
                             className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
-                          <button
-                            type="button"
-                            title="Ver cargas"
+                          <Link
+                            href={`/proveedores/${s.id}/cargas`}
+                            title="Ver historial de cargas"
                             className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                           >
                             <FileText className="h-4 w-4" />
-                          </button>
+                          </Link>
                           <button
                             type="button"
+                            onClick={() => handleToggleActive(s.id)}
                             title={
                               s.isActive
                                 ? "Desactivar proveedor"
@@ -265,10 +339,13 @@ export default function ProveedoresPage() {
                           <button
                             type="button"
                             onClick={() => setOpenSupplierId(openSupplierId === s.id ? null : s.id)}
-                            title="Ver contacto"
-                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            title="Ver información adicional"
+                            className={`ml-1 rounded-lg p-2 transition-colors ${openSupplierId === s.id
+                              ? "text-brand-600 bg-brand-50"
+                              : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                              }`}
                           >
-                            <FileText className="h-4 w-4" />
+                            <Info className="h-4 w-4" />
                           </button>
                         </div>
                       </td>
@@ -276,7 +353,7 @@ export default function ProveedoresPage() {
 
                     {openSupplierId === s.id && (
                       <tr key={`details-${s.id}`} className="bg-gray-50">
-                        <td colSpan={8} className="px-6 py-3 text-sm text-gray-700">
+                        <td colSpan={7} className="px-6 py-3 text-sm text-gray-700">
                           <div className="grid gap-4 sm:flex sm:items-center sm:justify-between">
                             <div className="flex items-center gap-4">
                               <div>
@@ -327,6 +404,59 @@ export default function ProveedoresPage() {
           </p>
         </div>
       </div>
+
+      {/* Form Modal (Crear / Editar) */}
+      {isFormOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">
+              {editingSupplier ? "Editar Proveedor" : "Nuevo Proveedor"}
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Razón Social</label>
+                <input
+                  type="text"
+                  defaultValue={editingSupplier?.name || ""}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">RUC</label>
+                <input
+                  type="text"
+                  defaultValue={editingSupplier?.ruc || ""}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  defaultValue={editingSupplier?.contactEmail || ""}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsFormOpen(false)}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFormOpen(false)}
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

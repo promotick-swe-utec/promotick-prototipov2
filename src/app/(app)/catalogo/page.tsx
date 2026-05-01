@@ -80,40 +80,40 @@ export default function CatalogoPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [brandFilter, setBrandFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [list, setList] = useState<Product[]>(products);
+  const [productList, setProductList] = useState<Product[]>(products);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  function handleToggleStatus(id: number, current: Product["status"]) {
-    const nextStatus = current === "active" ? "inactive" : "active";
-    setList((prev) =>
+  function handleToggleStatus(id: number, currentStatus: Product["status"]) {
+    const nextStatus = currentStatus === "active" ? "inactive" : "active";
+    setProductList((prev) =>
       prev.map((p) => (p.id === id ? { ...p, status: nextStatus } : p)),
     );
   }
 
   /* ── Filtered list ── */
   const filtered = useMemo(() => {
-    let current: Product[] = [...list];
+    let list: Product[] = [...productList];
 
     // Category
     if (categoryFilter !== "all") {
-      current = current.filter((p) => p.categoryName === categoryFilter);
+      list = list.filter((p) => p.categoryName === categoryFilter);
     }
 
     // Status
     if (statusFilter !== "all") {
-      current = current.filter((p) => p.status === statusFilter);
+      list = list.filter((p) => p.status === statusFilter);
     }
 
     // Brand
     if (brandFilter.trim()) {
       const q = brandFilter.toLowerCase();
-      current = current.filter((p) => p.brand.toLowerCase().includes(q));
+      list = list.filter((p) => p.brand.toLowerCase().includes(q));
     }
 
     // Search (SKU, EAN, name, netsuite code)
     if (search.trim()) {
       const q = search.toLowerCase();
-      current = current.filter(
+      list = list.filter(
         (p) =>
           p.sku.toLowerCase().includes(q) ||
           (p.ean && p.ean.includes(q)) ||
@@ -123,8 +123,8 @@ export default function CatalogoPage() {
       );
     }
 
-    return current;
-  }, [search, categoryFilter, statusFilter, brandFilter, list]);
+    return list;
+  }, [search, categoryFilter, statusFilter, brandFilter, productList]);
 
   /* ── Pagination ── */
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
