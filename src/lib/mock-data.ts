@@ -105,6 +105,7 @@ export interface AppUser {
   username: string;
   email: string;
   fullName: string;
+  password: string;
   roleName: string;
   isActive: boolean;
   lastLogin: string | null;
@@ -232,11 +233,11 @@ export const exportJobs: ExportJob[] = [
 ];
 
 export const appUsers: AppUser[] = [
-  { id: 1, username: "admin", email: "admin@promotick.pe", fullName: "Administrador Sistema", roleName: "Administrador", isActive: true, lastLogin: "2026-04-28 08:00" },
-  { id: 2, username: "agarcia", email: "ana.garcia@promotick.pe", fullName: "Ana García López", roleName: "Ejecutivo", isActive: true, lastLogin: "2026-04-28 07:45" },
-  { id: 3, username: "cmendoza", email: "carlos.mendoza@promotick.pe", fullName: "Carlos Mendoza Ruiz", roleName: "Ejecutivo", isActive: true, lastLogin: "2026-04-27 16:30" },
-  { id: 4, username: "lrios", email: "lucia.rios@promotick.pe", fullName: "Lucía Ríos Vargas", roleName: "Visualizador", isActive: true, lastLogin: "2026-04-26 10:15" },
-  { id: 5, username: "jlopez", email: "jorge.lopez@promotick.pe", fullName: "Jorge López Díaz", roleName: "Ejecutivo", isActive: false, lastLogin: "2026-03-10 14:00" },
+  { id: 1, username: "admin", email: "admin@promotick.pe", fullName: "Administrador Sistema", password: "Admin123!", roleName: "Administrador", isActive: true, lastLogin: "2026-04-28 08:00" },
+  { id: 2, username: "agarcia", email: "ana.garcia@promotick.pe", fullName: "Ana García López", password: "Ana123!", roleName: "Ejecutivo", isActive: true, lastLogin: "2026-04-28 07:45" },
+  { id: 3, username: "cmendoza", email: "carlos.mendoza@promotick.pe", fullName: "Carlos Mendoza Ruiz", password: "Carlos123!", roleName: "Ejecutivo", isActive: true, lastLogin: "2026-04-27 16:30" },
+  { id: 4, username: "lrios", email: "lucia.rios@promotick.pe", fullName: "Lucía Ríos Vargas", password: "Lucia123!", roleName: "Visualizador", isActive: true, lastLogin: "2026-04-26 10:15" },
+  { id: 5, username: "jlopez", email: "jorge.lopez@promotick.pe", fullName: "Jorge López Díaz", password: "Jorge123!", roleName: "Ejecutivo", isActive: false, lastLogin: "2026-03-10 14:00" },
 ];
 
 export const roles: Role[] = [

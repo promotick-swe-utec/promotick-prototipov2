@@ -27,6 +27,10 @@ import { isValidEmail } from "@/lib/validators";
 /* ------------------------------------------------------------------ */
 type Tab = "usuarios" | "roles" | "permisos";
 
+type CreateUserForm = Partial<AppUser> & {
+  password: string;
+};
+
 const tabs: { value: Tab; label: string; icon: React.ReactNode }[] = [
   { value: "usuarios", label: "Usuarios", icon: <Users className="h-4 w-4" /> },
   { value: "roles", label: "Roles", icon: <Shield className="h-4 w-4" /> },
@@ -97,7 +101,7 @@ function StatusBadge({ active }: { active: boolean }) {
 /* ------------------------------------------------------------------ */
 /*  Users Tab                                                           */
 /* ------------------------------------------------------------------ */
-function UsuariosTab({ users, onEdit, onToggleActive }: { users: AppUser[]; onEdit: (user: AppUser) => void; onToggleActive: (userId: number) => void }) {
+function UsuariosTab({ users, onEdit, onResetPassword, onToggleActive }: { users: AppUser[]; onEdit: (user: AppUser) => void; onResetPassword: (user: AppUser) => void; onToggleActive: (userId: number) => void }) {
   return (
     <div className="rounded-xl bg-white shadow-sm ring-1 ring-black/5">
       <div className="overflow-x-auto">
@@ -178,6 +182,7 @@ function UsuariosTab({ users, onEdit, onToggleActive }: { users: AppUser[]; onEd
                     <button
                       type="button"
                       title="Reset Password"
+                      onClick={() => onResetPassword(u)}
                       className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
                     >
                       <Key className="h-4 w-4" />
@@ -487,10 +492,11 @@ export default function UsuariosPage() {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [isCreatingRole, setIsCreatingRole] = useState(false);
 
-  const [userForm, setUserForm] = useState<Partial<AppUser>>({
+  const [userForm, setUserForm] = useState<CreateUserForm>({
     fullName: "",
     username: "",
     email: "",
+    password: "",
     roleName: roles[1]?.name || "Ejecutivo",
     isActive: true,
   });
@@ -520,9 +526,15 @@ export default function UsuariosPage() {
   const [editUserForm, setEditUserForm] = useState<Partial<AppUser>>({});
   const [editUserFormErrors, setEditUserFormErrors] = useState<Record<string, string>>({});
   const [editUserSubmitAttempt, setEditUserSubmitAttempt] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [resetPasswordUserId, setResetPasswordUserId] = useState<number | null>(null);
+  const [resetPasswordForm, setResetPasswordForm] = useState({ password: "", confirmPassword: "" });
+  const [resetPasswordErrors, setResetPasswordErrors] = useState<Record<string, string>>({});
+  const [resetPasswordSubmitAttempt, setResetPasswordSubmitAttempt] = useState(false);
+  const [resetPasswordSuccessMessage, setResetPasswordSuccessMessage] = useState<string | null>(null);
 
   function resetUserForm() {
-    setUserForm({ fullName: "", username: "", email: "", roleName: roles[1]?.name || "Ejecutivo", isActive: true });
+    setUserForm({ fullName: "", username: "", email: "", password: "", roleName: roles[1]?.name || "Ejecutivo", isActive: true });
   }
 
   function resetNewRoleForm() {
@@ -625,6 +637,53 @@ export default function UsuariosPage() {
     setIsEditingUser(true);
   }
 
+  function openResetPassword(user: AppUser) {
+    setResetPasswordUserId(user.id);
+    setResetPasswordForm({ password: "", confirmPassword: "" });
+    setResetPasswordErrors({});
+    setResetPasswordSubmitAttempt(false);
+    setResetPasswordSuccessMessage(null);
+    setIsResettingPassword(true);
+  }
+
+  function resetResetPasswordForm() {
+    setResetPasswordForm({ password: "", confirmPassword: "" });
+    setResetPasswordErrors({});
+    setResetPasswordSubmitAttempt(false);
+    setResetPasswordUserId(null);
+  }
+
+  function handleResetPassword(e: any) {
+    e.preventDefault();
+    setResetPasswordSubmitAttempt(true);
+
+    const errors: Record<string, string> = {};
+    if (!resetPasswordForm.password.trim()) errors.password = "La nueva contraseña es requerida";
+    else if (resetPasswordForm.password.trim().length < 6) errors.password = "La contraseña debe tener al menos 6 caracteres";
+    if (resetPasswordForm.password !== resetPasswordForm.confirmPassword) errors.confirmPassword = "Las contraseñas no coinciden";
+
+    if (Object.keys(errors).length > 0) {
+      setResetPasswordErrors(errors);
+      return;
+    }
+
+    if (resetPasswordUserId == null) return;
+
+    const targetUser = users.find((u) => u.id === resetPasswordUserId);
+    if (!targetUser) return;
+
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.id === resetPasswordUserId ? { ...u, password: resetPasswordForm.password } : u
+      )
+    );
+
+    setIsResettingPassword(false);
+    resetResetPasswordForm();
+    setResetPasswordSuccessMessage(`Contraseña actualizada para ${targetUser.fullName}`);
+    setTimeout(() => setResetPasswordSuccessMessage(null), 3000);
+  }
+
   function handleUpdateUser(e: any) {
     e.preventDefault();
     setEditUserSubmitAttempt(true);
@@ -659,6 +718,7 @@ export default function UsuariosPage() {
       fullName: editUserForm.fullName || "",
       username: editUserForm.username || "",
       email: editUserForm.email || "",
+      password: users.find((u) => u.id === editUserId)?.password || "",
       roleName: editUserForm.roleName || "Ejecutivo",
       isActive: editUserForm.isActive ?? true,
       lastLogin: users.find((u) => u.id === editUserId)?.lastLogin || null,
@@ -685,8 +745,9 @@ export default function UsuariosPage() {
     setUserSubmitAttempt(true);
     const errors: Record<string, string> = {};
     if (!userForm.fullName || !userForm.fullName.trim()) errors.fullName = "El nombre completo es requerido";
+    if (!userForm.email || !userForm.email.trim() || !isValidEmail(userForm.email)) errors.email = "Email inválido";
     if (!userForm.username || !userForm.username.trim()) errors.username = "El usuario es requerido";
-    if (!isValidEmail(userForm.email)) errors.email = "Email inválido";
+    if (!userForm.password || !userForm.password.trim()) errors.password = "La contraseña es requerida";
 
     // duplicate checks
     if (userForm.email && users.some(u => u.email === userForm.email)) {
@@ -707,6 +768,7 @@ export default function UsuariosPage() {
       username: userForm.username || `user${nextId}`,
       email: userForm.email || "",
       fullName: userForm.fullName || "",
+      password: userForm.password || "",
       roleName: userForm.roleName || roles[1]?.name || "Ejecutivo",
       isActive: userForm.isActive ?? true,
       lastLogin: null,
@@ -774,7 +836,7 @@ export default function UsuariosPage() {
 
       {/* -- Tab content -- */}
       {activeTab === "usuarios" && (
-        <UsuariosTab users={users} onEdit={openEditUser} onToggleActive={handleToggleUserActive} />
+        <UsuariosTab users={users} onEdit={openEditUser} onResetPassword={openResetPassword} onToggleActive={handleToggleUserActive} />
       )}
       {activeTab === "roles" && (
         <RolesTab rolesList={rolesList} onCreateRole={() => setIsCreatingRole(true)} onEditPermissions={openEditPermissionsModal} />
@@ -806,21 +868,6 @@ export default function UsuariosPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label htmlFor="create-user-username" className="block text-xs text-gray-600">Usuario</label>
-                <input
-                  id="create-user-username"
-                  value={userForm.username}
-                  onChange={(e) => {
-                    setUserForm((f) => ({ ...f, username: e.target.value }));
-                    setUserFormErrors((prev) => { const next = { ...prev }; delete next.username; return next; });
-                  }}
-                  className="mt-1 w-full rounded-md border px-3 py-2"
-                />
-                {(userSubmitAttempt && !userForm.username) && (
-                  <p className="mt-1 text-xs text-red-600">El usuario es requerido</p>
-                )}
-              </div>
-              <div>
                 <label htmlFor="create-user-email" className="block text-xs text-gray-600">Email</label>
                 <input
                   id="create-user-email"
@@ -835,12 +882,57 @@ export default function UsuariosPage() {
                   <p className="mt-1 text-xs text-red-600">Ingrese un email válido</p>
                 )}
               </div>
+              <div>
+                <label htmlFor="create-user-username" className="block text-xs text-gray-600">Usuario</label>
+                <input
+                  id="create-user-username"
+                  value={userForm.username}
+                  onChange={(e) => {
+                    setUserForm((f) => ({ ...f, username: e.target.value }));
+                    setUserFormErrors((prev) => { const next = { ...prev }; delete next.username; return next; });
+                  }}
+                  className="mt-1 w-full rounded-md border px-3 py-2"
+                />
+                {(userSubmitAttempt && !userForm.username) && (
+                  <p className="mt-1 text-xs text-red-600">El usuario es requerido</p>
+                )}
+              </div>
             </div>
 
             <div className="mt-3">
-              <label htmlFor="create-user-role" className="block text-xs text-gray-600">Rol</label>
+              <label htmlFor="create-user-password" className="block text-xs text-gray-600">Contraseña</label>
+              <input
+                id="create-user-password"
+                type="password"
+                value={userForm.password}
+                onChange={(e) => {
+                  setUserForm((f) => ({ ...f, password: e.target.value }));
+                  setUserFormErrors((prev) => { const next = { ...prev }; delete next.password; return next; });
+                }}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              />
+              {(userSubmitAttempt && !userForm.password) && (
+                <p className="mt-1 text-xs text-red-600">La contraseña es requerida</p>
+              )}
+            </div>
+
+            <div className="mt-3">
+              <label htmlFor="create-user-role" className="block text-xs text-gray-600">Rol asignado</label>
               <select id="create-user-role" value={userForm.roleName} onChange={(e) => setUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
                 {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+              </select>
+            </div>
+
+            <div className="mt-3">
+              <label htmlFor="create-user-status" className="block text-xs text-gray-600">Estado</label>
+              <select
+                id="create-user-status"
+                value={userForm.isActive ? "active" : "inactive"}
+                onChange={(e) => setUserForm((f) => ({ ...f, isActive: e.target.value === "active" }))}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
               </select>
             </div>
 
@@ -1013,6 +1105,66 @@ export default function UsuariosPage() {
             <div className="mt-4 flex justify-end gap-2">
               <button type="button" onClick={() => { setIsEditingUser(false); resetEditUserForm(); }} className="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
               <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Guardar</button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Reset password modal */}
+      {isResettingPassword && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <form onSubmit={handleResetPassword} className="w-full max-w-md rounded-lg bg-white p-6">
+            <h3 className="mb-4 text-lg font-semibold text-gray-900">Reset Password</h3>
+            {resetPasswordSuccessMessage && (
+              <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{resetPasswordSuccessMessage}</div>
+            )}
+            <p className="mb-4 text-sm text-gray-500">
+              Usuario: <span className="font-medium text-gray-900">{users.find((u) => u.id === resetPasswordUserId)?.fullName ?? ""}</span>
+            </p>
+            <div className="mb-3">
+              <label htmlFor="reset-password-new" className="block text-xs text-gray-600">Nueva contraseña</label>
+              <input
+                id="reset-password-new"
+                type="password"
+                value={resetPasswordForm.password}
+                onChange={(e) => {
+                  setResetPasswordForm((f) => ({ ...f, password: e.target.value }));
+                  setResetPasswordErrors((prev) => { const next = { ...prev }; delete next.password; return next; });
+                }}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              />
+              {(resetPasswordSubmitAttempt && resetPasswordErrors.password) && (
+                <p className="mt-1 text-xs text-red-600">{resetPasswordErrors.password}</p>
+              )}
+            </div>
+            <div className="mb-3">
+              <label htmlFor="reset-password-confirm" className="block text-xs text-gray-600">Confirmar contraseña</label>
+              <input
+                id="reset-password-confirm"
+                type="password"
+                value={resetPasswordForm.confirmPassword}
+                onChange={(e) => {
+                  setResetPasswordForm((f) => ({ ...f, confirmPassword: e.target.value }));
+                  setResetPasswordErrors((prev) => { const next = { ...prev }; delete next.confirmPassword; return next; });
+                }}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              />
+              {(resetPasswordSubmitAttempt && resetPasswordErrors.confirmPassword) && (
+                <p className="mt-1 text-xs text-red-600">{resetPasswordErrors.confirmPassword}</p>
+              )}
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsResettingPassword(false);
+                  resetResetPasswordForm();
+                }}
+                className="rounded-lg border px-4 py-2 text-sm"
+              >
+                Cancelar
+              </button>
+              <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Guardar nueva contraseña</button>
             </div>
           </form>
         </div>

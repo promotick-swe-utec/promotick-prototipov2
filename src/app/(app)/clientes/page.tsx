@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { Fragment, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Plus,
@@ -212,16 +212,6 @@ export default function ClientesPage() {
     setClientSubmitAttempt(true);
     const errors: Record<string, string> = {};
     if (!form.name || !form.name.trim()) errors.name = "El nombre es requerido";
-    if (!isValidEmail(form.contactEmail)) errors.contactEmail = "Email inválido";
-
-    // check duplicates by email
-    if (form.contactEmail && list.some((c) => c.contactEmail === form.contactEmail)) {
-      errors.contactEmail = "Ya existe un cliente con ese email";
-    }
-
-    if (form.contactPhone && !isValidPhone(form.contactPhone)) {
-      errors.contactPhone = "Teléfono inválido";
-    }
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -241,8 +231,6 @@ export default function ClientesPage() {
       isActive: form.isActive ?? true,
       categoriesCount: form.categoriesCount ?? 0,
       hasOutputTemplate: form.hasOutputTemplate ?? false,
-      contactEmail: form.contactEmail,
-      contactPhone: form.contactPhone,
     };
 
     setList((prev) => [newClient, ...prev]);
@@ -552,33 +540,38 @@ export default function ClientesPage() {
               )}
             </div>
             <div className="mb-3">
-              <label htmlFor="create-client-desc" className="block text-xs text-gray-600">Descripción</label>
-              <input id="create-client-desc" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
+              <label htmlFor="create-client-type" className="block text-xs text-gray-600">Tipo</label>
+              <select
+                id="create-client-type"
+                value={form.type}
+                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as Client["type"] }))}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              >
+                <option value="web_app">Web</option>
+                <option value="erp">ERP</option>
+                <option value="marketplace">Marketplace</option>
+              </select>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="create-client-email" className="block text-xs text-gray-600">Email</label>
-                <input
-                  id="create-client-email"
-                  value={form.contactEmail}
-                  onChange={(e) => {
-                    setForm((f) => ({ ...f, contactEmail: e.target.value }));
-                    setFormErrors((prev) => {
-                      const next = { ...prev };
-                      delete next.contactEmail;
-                      return next;
-                    });
-                  }}
-                  className="mt-1 w-full rounded-md border px-3 py-2"
-                />
-                {(clientSubmitAttempt && !isValidEmail(form.contactEmail)) && (
-                  <p className="mt-1 text-xs text-red-600">Ingrese un email válido</p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="create-client-phone" className="block text-xs text-gray-600">Teléfono</label>
-                <input id="create-client-phone" value={form.contactPhone} onChange={(e) => setForm(f => ({ ...f, contactPhone: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
-              </div>
+            <div className="mb-3">
+              <label htmlFor="create-client-desc" className="block text-xs text-gray-600">Descripción</label>
+              <input
+                id="create-client-desc"
+                value={form.description}
+                onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="create-client-active" className="block text-xs text-gray-600">Estado activo</label>
+              <select
+                id="create-client-active"
+                value={form.isActive ? "active" : "inactive"}
+                onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.value === "active" }))}
+                className="mt-1 w-full rounded-md border px-3 py-2"
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
