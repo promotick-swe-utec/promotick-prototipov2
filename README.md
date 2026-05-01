@@ -1,0 +1,1 @@
+# promotick-frontend-prototipov2
