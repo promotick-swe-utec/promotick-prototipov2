@@ -592,8 +592,11 @@ export default function UsuariosPage() {
   function openEditPermissionsModal(role: Role) {
     setEditPermissionsRoleId(role.id);
     const permissionsMap: Record<string, boolean> = {};
+    const isAdmin = role.name === "Administrador";
+
     allPermissions.forEach((perm) => {
-      permissionsMap[perm.code] = role.permissions.includes(perm.code);
+      // Para administrador, todos los permisos están marcados
+      permissionsMap[perm.code] = isAdmin ? true : role.permissions.includes(perm.code);
     });
     setEditPermissionsForm(permissionsMap);
     setIsEditingPermissions(true);
