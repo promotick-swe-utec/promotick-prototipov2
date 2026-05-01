@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, Fragment } from "react";
 import Link from "next/link";
 import {
   Plus,
@@ -388,11 +388,8 @@ export default function ClientesPage() {
                 </tr>
               ) : (
                 filtered.map((c) => (
-                  <>
-                    <tr
-                      key={c.id}
-                      className="group transition-colors hover:bg-gray-50/60"
-                    >
+                  <Fragment key={c.id}>
+                    <tr className="group transition-colors hover:bg-gray-50/60">
                       {/* Name */}
                       <td className="py-4 pl-6 pr-3">
                         <span className="font-medium text-gray-900">
@@ -504,7 +501,7 @@ export default function ClientesPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 ))
               )}
             </tbody>
