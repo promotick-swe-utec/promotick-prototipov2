@@ -410,24 +410,32 @@ function MatrizPermisosTab() {
                     return (
                       <td key={role.id} className="px-4 py-3 text-center">
                         <div className="flex justify-center">
-                          <button
-                            type="button"
-                            onClick={() => togglePermission(role.id, perm.code, isSystem)}
-                            disabled={isSystem}
-                            className={`inline-flex h-6 w-6 items-center justify-center rounded-full transition-all focus:outline-none ${isSystem
-                              ? "cursor-not-allowed opacity-50 grayscale"
-                              : "cursor-pointer"
-                              } ${hasPermission
-                                ? "bg-green-50 text-green-600"
-                                : "bg-gray-50 text-gray-300"
+                          {isSystem ? (
+                            /* Administrador: always checked, non-interactive, full green */
+                            <span
+                              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-green-100 text-green-600"
+                              title="Administrador — permiso fijo"
+                            >
+                              <Check className="h-4 w-4" strokeWidth={2.5} />
+                            </span>
+                          ) : (
+                            /* Ejecutivo / Visualizador: interactive toggle */
+                            <button
+                              type="button"
+                              onClick={() => togglePermission(role.id, perm.code, false)}
+                              className={`inline-flex h-7 w-7 items-center justify-center rounded-full transition-all focus:outline-none cursor-pointer ${
+                                hasPermission
+                                  ? "bg-green-100 text-green-600 hover:bg-green-200"
+                                  : "bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500"
                               }`}
-                          >
-                            {hasPermission ? (
-                              <Check className="h-3.5 w-3.5" />
-                            ) : (
-                              <X className="h-3.5 w-3.5" />
-                            )}
-                          </button>
+                            >
+                              {hasPermission ? (
+                                <Check className="h-4 w-4" strokeWidth={2.5} />
+                              ) : (
+                                <X className="h-4 w-4" strokeWidth={2.5} />
+                              )}
+                            </button>
+                          )}
                         </div>
                       </td>
                     );
