@@ -47,7 +47,6 @@ const navigation: NavSection[] = [
     title: "OPERACIONES",
     items: [
       { label: "Cargar Plantilla", href: "/cargar-plantilla", icon: Upload },
-      { label: "Revisar Lote", href: "/revision-lote", icon: ClipboardCheck },
       { label: "Exportar", href: "/exportar", icon: Download },
     ],
   },
