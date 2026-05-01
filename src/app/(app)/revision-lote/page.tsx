@@ -147,6 +147,7 @@ function SummaryCard({
 function NuevosTab({
   rows,
   confirmedIds,
+  rejectedIds,
   onConfirm,
   onReject,
   onConfirmAll,
@@ -154,6 +155,7 @@ function NuevosTab({
 }: {
   rows: UploadRow[];
   confirmedIds: Set<number>;
+  rejectedIds: Set<number>;
   onConfirm: (row: number) => void;
   onReject: (row: number) => void;
   onConfirmAll: () => void;
@@ -165,7 +167,7 @@ function NuevosTab({
         <button
           type="button"
           onClick={onConfirmAll}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
         >
           <Check className="h-4 w-4" />
           Confirmar Todos
@@ -197,12 +199,15 @@ function NuevosTab({
             <tbody className="divide-y divide-gray-50">
               {rows.map((row) => {
                 const isConfirmed = confirmedIds.has(row.rowNumber);
+                const isRejected = rejectedIds.has(row.rowNumber);
                 return (
                   <tr
                     key={row.rowNumber}
                     className={`group transition-colors ${isConfirmed
-                      ? "bg-brand-50/30"
-                      : "hover:bg-gray-50/60"
+                      ? "bg-green-50/40"
+                      : isRejected
+                        ? "bg-red-50/30"
+                        : "hover:bg-gray-50/60"
                       }`}
                   >
                     <td className="py-3.5 pl-6 pr-3 font-mono text-xs text-gray-400">
@@ -226,32 +231,35 @@ function NuevosTab({
                       </span>
                     </td>
                     <td className="py-3.5 pl-3 pr-6">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1.5">
                         <button
                           type="button"
                           title="Confirmar"
                           onClick={() => onConfirm(row.rowNumber)}
-                          className={`rounded-lg p-2 transition-colors ${isConfirmed
-                            ? "bg-brand-100 text-brand-700"
-                            : "text-gray-400 hover:bg-brand-50 hover:text-brand-600"
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full transition-all focus:outline-none cursor-pointer ${isConfirmed
+                            ? "bg-green-100 text-green-700 hover:bg-green-200"
+                            : "bg-transparent text-gray-400 hover:bg-green-50 hover:text-green-600"
                             }`}
                         >
-                          <Check className="h-4 w-4" />
+                          <Check className="h-4 w-4" strokeWidth={2.5} />
                         </button>
                         <button
                           type="button"
                           title="Rechazar"
                           onClick={() => onReject(row.rowNumber)}
-                          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full transition-all focus:outline-none cursor-pointer ${isRejected
+                            ? "bg-red-100 text-red-700 hover:bg-red-200"
+                            : "bg-transparent text-gray-400 hover:bg-red-50 hover:text-red-600"
+                            }`}
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-4 w-4" strokeWidth={2.5} />
                         </button>
                         <button
                           type="button"
                           title="Editar"
-                          className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-transparent text-gray-400 transition-all hover:bg-blue-50 hover:text-blue-600 focus:outline-none cursor-pointer"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Pencil className="h-4 w-4" strokeWidth={2.5} />
                         </button>
                       </div>
                     </td>
@@ -535,7 +543,7 @@ function DuplicadosTab({
             <div className="border-t border-gray-100 bg-amber-50/30 px-6 py-3">
               <p className="flex items-center gap-2 text-xs text-amber-700">
                 <ArrowDown className="h-3.5 w-3.5" />
-                <strong>Fusionar:</strong> actualiza los campos del producto existente con los nuevos datos y conserva el código NetSuite <strong>{existing?.netsuiteCode ?? row.duplicateOf}</strong>
+                <strong>Combinar:</strong> actualiza los campos del producto existente con los nuevos datos y conserva el código NetSuite <strong>{existing?.netsuiteCode ?? row.duplicateOf}</strong>
               </p>
             </div>
 
@@ -547,7 +555,7 @@ function DuplicadosTab({
                 className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
               >
                 <GitMerge className="h-4 w-4" />
-                Fusionar
+                Combinar
               </button>
               <button
                 type="button"
@@ -730,6 +738,7 @@ export default function RevisionLotePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("new");
   const [confirmedIds, setConfirmedIds] = useState<Set<number>>(new Set());
+  const [rejectedIds, setRejectedIds] = useState<Set<number>>(new Set());
 
   /* Duplicate resolution state */
   const [dupResolutions, setDupResolutions] = useState<
@@ -772,25 +781,44 @@ export default function RevisionLotePage() {
   function handleConfirm(rowNumber: number) {
     setConfirmedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(rowNumber)) next.delete(rowNumber);
-      else next.add(rowNumber);
+      if (next.has(rowNumber)) {
+        next.delete(rowNumber);
+      } else {
+        next.add(rowNumber);
+        setRejectedIds((r) => {
+          const nr = new Set(r);
+          nr.delete(rowNumber);
+          return nr;
+        });
+      }
       return next;
     });
   }
 
   function handleReject(rowNumber: number) {
-    setConfirmedIds((prev) => {
+    setRejectedIds((prev) => {
       const next = new Set(prev);
-      next.delete(rowNumber);
+      if (next.has(rowNumber)) {
+        next.delete(rowNumber);
+      } else {
+        next.add(rowNumber);
+        setConfirmedIds((c) => {
+          const nc = new Set(c);
+          nc.delete(rowNumber);
+          return nc;
+        });
+      }
       return next;
     });
   }
 
   function handleConfirmAll() {
     setConfirmedIds(new Set(newRows.map((r) => r.rowNumber)));
+    setRejectedIds(new Set());
   }
 
   function handleRejectAll() {
+    setRejectedIds(new Set(newRows.map((r) => r.rowNumber)));
     setConfirmedIds(new Set());
   }
 
@@ -872,34 +900,33 @@ export default function RevisionLotePage() {
         </p>
       </div>
 
-      {/* Summary cards */}
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <SummaryCard
           label="Total Procesados"
           value={sampleUploadRows.length}
           icon={<Package className="h-6 w-6 text-blue-600" />}
-          accentBg="bg-blue-50"
+          accentBg="bg-blue-100"
           accentText="text-blue-700"
         />
         <SummaryCard
           label="Nuevos"
           value={newRows.length}
-          icon={<CheckCircle className="h-6 w-6 text-brand-600" />}
-          accentBg="bg-brand-50"
-          accentText="text-brand-700"
+          icon={<CheckCircle className="h-6 w-6 text-green-600" />}
+          accentBg="bg-green-100"
+          accentText="text-green-700"
         />
         <SummaryCard
           label="Duplicados Detectados"
           value={duplicateRows.length}
-          icon={<AlertTriangle className="h-6 w-6 text-amber-600" />}
-          accentBg="bg-amber-50"
-          accentText="text-amber-700"
+          icon={<AlertTriangle className="h-6 w-6 text-red-600" />}
+          accentBg="bg-red-100"
+          accentText="text-red-700"
         />
       </div>
 
       {/* Tabs */}
-      <div className="mb-6">
-        <div className="flex items-center gap-1 rounded-xl bg-white p-1.5 shadow-sm ring-1 ring-black/5">
+      <div className="mb-6 border-b border-gray-200">
+        <nav className="-mb-px flex gap-6">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -907,15 +934,15 @@ export default function RevisionLotePage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${isActive
-                  ? "bg-gray-900 text-white shadow-sm"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                className={`inline-flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${isActive
+                  ? "border-brand-600 text-brand-600"
+                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   }`}
               >
                 {tab.label}
                 <span
                   className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${isActive
-                    ? "bg-white/20 text-white"
+                    ? "bg-brand-100 text-brand-700"
                     : "bg-gray-100 text-gray-500"
                     }`}
                 >
@@ -924,7 +951,7 @@ export default function RevisionLotePage() {
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
 
       {/* Tab content */}
@@ -933,6 +960,7 @@ export default function RevisionLotePage() {
           <NuevosTab
             rows={newRows}
             confirmedIds={confirmedIds}
+            rejectedIds={rejectedIds}
             onConfirm={handleConfirm}
             onReject={handleReject}
             onConfirmAll={handleConfirmAll}
@@ -993,7 +1021,7 @@ export default function RevisionLotePage() {
             type="button"
             disabled={confirmedCount === 0}
             onClick={() => router.push("/exportar")}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition-all hover:bg-brand-700 hover:shadow-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/30 transition-all hover:bg-brand-700 hover:shadow-brand-600/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
           >
             Confirmar Lote
             <ArrowRight className="h-4 w-4" />
