@@ -187,21 +187,7 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* ######## DEV-ONLY: quick login buttons — remove this block for production ############ */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-[10px] text-gray-400 uppercase tracking-wider">Testing:</span>
-            {([["admin@admin.com", "admin", "Admin"], ["user@user.com", "user", "User"]] as const).map(([email, pass, label]) => (
-              <button
-                key={email}
-                type="button"
-                onClick={() => { login(email, pass); router.push("/proveedores"); }}
-                className="rounded-full border border-gray-200 px-3 py-1 text-[11px] text-gray-500 transition-colors hover:border-brand-400 hover:text-brand-600"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {/*######################### END DEV-ONLY ###########################33 */}
+
         </div>
 
         <p className="mt-16 text-xs text-gray-400">

@@ -19,8 +19,8 @@ interface AuthContextValue {
 }
 
 const MOCK_ACCOUNTS: Record<string, { password: string; fullName: string; role: Role }> = {
-  "admin@admin.com": { password: "admin", fullName: "Administrador Sistema", role: "admin" },
-  "user@user.com": { password: "user", fullName: "Ana García López", role: "usuario" },
+  "admin@promotick.com": { password: "12345678", fullName: "Administrador Sistema", role: "admin" },
+  "user@promotick.com": { password: "12345678", fullName: "Ana García López", role: "usuario" },
 };
 
 const AuthContext = createContext<AuthContextValue>({
