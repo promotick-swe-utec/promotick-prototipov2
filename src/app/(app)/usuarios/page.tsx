@@ -49,6 +49,23 @@ function fmtDate(iso: string | null): string {
   return iso;
 }
 
+const CORPORATE_PASSWORD_MIN_LENGTH = 12;
+
+function validateCorporatePasswordPolicy(password: string): string | null {
+  const value = password.trim();
+
+  if (!value) return "La nueva contraseña es requerida";
+  if (value.length < CORPORATE_PASSWORD_MIN_LENGTH) {
+    return `Debe tener al menos ${CORPORATE_PASSWORD_MIN_LENGTH} caracteres`;
+  }
+  if (!/[a-z]/.test(value)) return "Debe incluir letras minúsculas";
+  if (!/[A-Z]/.test(value)) return "Debe incluir letras mayúsculas";
+  if (!/[0-9]/.test(value)) return "Debe incluir números";
+  if (!/[^A-Za-z0-9]/.test(value)) return "Debe incluir símbolos";
+
+  return null;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Role badge colors                                                   */
 /* ------------------------------------------------------------------ */
@@ -428,11 +445,10 @@ function MatrizPermisosTab() {
                             <button
                               type="button"
                               onClick={() => togglePermission(role.id, perm.code, false)}
-                              className={`inline-flex h-7 w-7 items-center justify-center rounded-full transition-all focus:outline-none cursor-pointer ${
-                                hasPermission
-                                  ? "bg-green-100 text-green-600 hover:bg-green-200"
-                                  : "bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500"
-                              }`}
+                              className={`inline-flex h-7 w-7 items-center justify-center rounded-full transition-all focus:outline-none cursor-pointer ${hasPermission
+                                ? "bg-green-100 text-green-600 hover:bg-green-200"
+                                : "bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-500"
+                                }`}
                             >
                               {hasPermission ? (
                                 <Check className="h-4 w-4" strokeWidth={2.5} />
@@ -658,8 +674,8 @@ export default function UsuariosPage() {
     setResetPasswordSubmitAttempt(true);
 
     const errors: Record<string, string> = {};
-    if (!resetPasswordForm.password.trim()) errors.password = "La nueva contraseña es requerida";
-    else if (resetPasswordForm.password.trim().length < 6) errors.password = "La contraseña debe tener al menos 6 caracteres";
+    const passwordPolicyError = validateCorporatePasswordPolicy(resetPasswordForm.password);
+    if (passwordPolicyError) errors.password = passwordPolicyError;
     if (resetPasswordForm.password !== resetPasswordForm.confirmPassword) errors.confirmPassword = "Las contraseñas no coinciden";
 
     if (Object.keys(errors).length > 0) {
@@ -1118,6 +1134,9 @@ export default function UsuariosPage() {
             {resetPasswordSuccessMessage && (
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{resetPasswordSuccessMessage}</div>
             )}
+            <div className="mb-4 rounded-md bg-slate-50 p-3 text-xs leading-5 text-slate-700 ring-1 ring-inset ring-slate-200">
+              Mínimo {CORPORATE_PASSWORD_MIN_LENGTH} caracteres, con mayúsculas, minúsculas, números y símbolos.
+            </div>
             <p className="mb-4 text-sm text-gray-500">
               Usuario: <span className="font-medium text-gray-900">{users.find((u) => u.id === resetPasswordUserId)?.fullName ?? ""}</span>
             </p>
