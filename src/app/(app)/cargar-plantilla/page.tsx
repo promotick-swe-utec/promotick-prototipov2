@@ -236,6 +236,7 @@ function StepUpload({
             {search && (
               <button
                 type="button"
+                aria-label="Limpiar búsqueda"
                 onClick={() => { onSupplierChange(""); setSearch(""); }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-gray-400 hover:text-gray-600"
               >

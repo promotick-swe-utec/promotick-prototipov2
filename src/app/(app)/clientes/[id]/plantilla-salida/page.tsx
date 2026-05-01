@@ -182,11 +182,12 @@ export default function PlantillaSalidaPage() {
           {/* Points conversion factor */}
           {client.pointsConversionFactor !== null && (
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label htmlFor="conversionFactor" className="mb-2 block text-sm font-medium text-gray-700">
                 Factor de Conversión
               </label>
               <div className="flex items-center gap-2">
                 <input
+                  id="conversionFactor"
                   type="text"
                   value={client.pointsConversionFactor}
                   readOnly

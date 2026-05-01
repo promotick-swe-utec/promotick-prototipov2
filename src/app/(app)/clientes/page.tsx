@@ -326,6 +326,7 @@ export default function ClientesPage() {
 
           <div className="mt-3 sm:mt-0 flex items-center gap-2">
             <select
+              aria-label="Filtrar por tipo"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700"
@@ -337,6 +338,7 @@ export default function ClientesPage() {
             </select>
 
             <select
+              aria-label="Filtrar por estado"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
               className="rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700"
@@ -534,8 +536,9 @@ export default function ClientesPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{successMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre</label>
+              <label htmlFor="create-client-name" className="block text-xs text-gray-600">Nombre</label>
               <input
+                id="create-client-name"
                 value={form.name}
                 onChange={(e) => {
                   setForm((f) => ({ ...f, name: e.target.value }));
@@ -552,13 +555,14 @@ export default function ClientesPage() {
               )}
             </div>
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Descripción</label>
-              <input value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
+              <label htmlFor="create-client-desc" className="block text-xs text-gray-600">Descripción</label>
+              <input id="create-client-desc" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs text-gray-600">Email</label>
+                <label htmlFor="create-client-email" className="block text-xs text-gray-600">Email</label>
                 <input
+                  id="create-client-email"
                   value={form.contactEmail}
                   onChange={(e) => {
                     setForm((f) => ({ ...f, contactEmail: e.target.value }));
@@ -575,8 +579,8 @@ export default function ClientesPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Teléfono</label>
-                <input value={form.contactPhone} onChange={(e) => setForm(f => ({ ...f, contactPhone: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
+                <label htmlFor="create-client-phone" className="block text-xs text-gray-600">Teléfono</label>
+                <input id="create-client-phone" value={form.contactPhone} onChange={(e) => setForm(f => ({ ...f, contactPhone: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
               </div>
             </div>
 
@@ -596,8 +600,9 @@ export default function ClientesPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{successMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre</label>
+              <label htmlFor="edit-client-name" className="block text-xs text-gray-600">Nombre</label>
               <input
+                id="edit-client-name"
                 value={editForm.name ?? ""}
                 onChange={(e) => {
                   setEditForm((f) => ({ ...f, name: e.target.value }));
@@ -614,13 +619,14 @@ export default function ClientesPage() {
               )}
             </div>
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Descripción</label>
-              <input value={editForm.description ?? ""} onChange={(e) => setEditForm(f => ({ ...f, description: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
+              <label htmlFor="edit-client-desc" className="block text-xs text-gray-600">Descripción</label>
+              <input id="edit-client-desc" value={editForm.description ?? ""} onChange={(e) => setEditForm(f => ({ ...f, description: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs text-gray-600">Email</label>
+                <label htmlFor="edit-client-email" className="block text-xs text-gray-600">Email</label>
                 <input
+                  id="edit-client-email"
                   value={editForm.contactEmail ?? ""}
                   onChange={(e) => {
                     setEditForm((f) => ({ ...f, contactEmail: e.target.value }));
@@ -637,8 +643,8 @@ export default function ClientesPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Teléfono</label>
-                <input value={editForm.contactPhone ?? ""} onChange={(e) => setEditForm(f => ({ ...f, contactPhone: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
+                <label htmlFor="edit-client-phone" className="block text-xs text-gray-600">Teléfono</label>
+                <input id="edit-client-phone" value={editForm.contactPhone ?? ""} onChange={(e) => setEditForm(f => ({ ...f, contactPhone: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2" />
               </div>
             </div>
 

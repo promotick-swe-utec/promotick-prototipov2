@@ -782,8 +782,9 @@ export default function UsuariosPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{userSuccessMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre Completo</label>
+              <label htmlFor="create-user-fullname" className="block text-xs text-gray-600">Nombre Completo</label>
               <input
+                id="create-user-fullname"
                 value={userForm.fullName}
                 onChange={(e) => {
                   setUserForm((f) => ({ ...f, fullName: e.target.value }));
@@ -797,8 +798,9 @@ export default function UsuariosPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs text-gray-600">Usuario</label>
+                <label htmlFor="create-user-username" className="block text-xs text-gray-600">Usuario</label>
                 <input
+                  id="create-user-username"
                   value={userForm.username}
                   onChange={(e) => {
                     setUserForm((f) => ({ ...f, username: e.target.value }));
@@ -811,8 +813,9 @@ export default function UsuariosPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Email</label>
+                <label htmlFor="create-user-email" className="block text-xs text-gray-600">Email</label>
                 <input
+                  id="create-user-email"
                   value={userForm.email}
                   onChange={(e) => {
                     setUserForm((f) => ({ ...f, email: e.target.value }));
@@ -827,8 +830,8 @@ export default function UsuariosPage() {
             </div>
 
             <div className="mt-3">
-              <label className="block text-xs text-gray-600">Rol</label>
-              <select value={userForm.roleName} onChange={(e) => setUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
+              <label htmlFor="create-user-role" className="block text-xs text-gray-600">Rol</label>
+              <select id="create-user-role" value={userForm.roleName} onChange={(e) => setUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
                 {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
               </select>
             </div>
@@ -850,8 +853,9 @@ export default function UsuariosPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{userSuccessMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre Completo</label>
+              <label htmlFor="edit-user-fullname" className="block text-xs text-gray-600">Nombre Completo</label>
               <input
+                id="edit-user-fullname"
                 value={editUserForm.fullName ?? ""}
                 onChange={(e) => {
                   setEditUserForm((f) => ({ ...f, fullName: e.target.value }));
@@ -865,8 +869,9 @@ export default function UsuariosPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs text-gray-600">Usuario</label>
+                <label htmlFor="edit-user-username" className="block text-xs text-gray-600">Usuario</label>
                 <input
+                  id="edit-user-username"
                   value={editUserForm.username ?? ""}
                   onChange={(e) => {
                     setEditUserForm((f) => ({ ...f, username: e.target.value }));
@@ -879,8 +884,9 @@ export default function UsuariosPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Email</label>
+                <label htmlFor="edit-user-email" className="block text-xs text-gray-600">Email</label>
                 <input
+                  id="edit-user-email"
                   value={editUserForm.email ?? ""}
                   onChange={(e) => {
                     setEditUserForm((f) => ({ ...f, email: e.target.value }));
@@ -895,8 +901,8 @@ export default function UsuariosPage() {
             </div>
 
             <div className="mt-3">
-              <label className="block text-xs text-gray-600">Rol</label>
-              <select value={editUserForm.roleName ?? "Ejecutivo"} onChange={(e) => setEditUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
+              <label htmlFor="edit-user-role" className="block text-xs text-gray-600">Rol</label>
+              <select id="edit-user-role" value={editUserForm.roleName ?? "Ejecutivo"} onChange={(e) => setEditUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
                 {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
               </select>
             </div>
@@ -930,8 +936,9 @@ export default function UsuariosPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{userSuccessMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre Completo</label>
+              <label htmlFor="edit-user-fullname" className="block text-xs text-gray-600">Nombre Completo</label>
               <input
+                id="edit-user-fullname"
                 value={editUserForm.fullName ?? ""}
                 onChange={(e) => {
                   setEditUserForm((f) => ({ ...f, fullName: e.target.value }));
@@ -945,8 +952,9 @@ export default function UsuariosPage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs text-gray-600">Usuario</label>
+                <label htmlFor="edit-user-username" className="block text-xs text-gray-600">Usuario</label>
                 <input
+                  id="edit-user-username"
                   value={editUserForm.username ?? ""}
                   onChange={(e) => {
                     setEditUserForm((f) => ({ ...f, username: e.target.value }));
@@ -959,8 +967,9 @@ export default function UsuariosPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Email</label>
+                <label htmlFor="edit-user-email" className="block text-xs text-gray-600">Email</label>
                 <input
+                  id="edit-user-email"
                   value={editUserForm.email ?? ""}
                   onChange={(e) => {
                     setEditUserForm((f) => ({ ...f, email: e.target.value }));
@@ -975,8 +984,8 @@ export default function UsuariosPage() {
             </div>
 
             <div className="mt-3">
-              <label className="block text-xs text-gray-600">Rol</label>
-              <select value={editUserForm.roleName ?? "Ejecutivo"} onChange={(e) => setEditUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
+              <label htmlFor="edit-user-role" className="block text-xs text-gray-600">Rol</label>
+              <select id="edit-user-role" value={editUserForm.roleName ?? "Ejecutivo"} onChange={(e) => setEditUserForm(f => ({ ...f, roleName: e.target.value }))} className="mt-1 w-full rounded-md border px-3 py-2">
                 {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
               </select>
             </div>
@@ -1010,8 +1019,9 @@ export default function UsuariosPage() {
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{roleSuccessMessage}</div>
             )}
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Nombre del Rol</label>
+              <label htmlFor="create-role-name" className="block text-xs text-gray-600">Nombre del Rol</label>
               <input
+                id="create-role-name"
                 value={newRoleForm.name}
                 onChange={(e) => {
                   setNewRoleForm((f) => ({ ...f, name: e.target.value }));
@@ -1028,8 +1038,9 @@ export default function UsuariosPage() {
             </div>
 
             <div className="mb-3">
-              <label className="block text-xs text-gray-600">Descripción</label>
+              <label htmlFor="create-role-desc" className="block text-xs text-gray-600">Descripción</label>
               <textarea
+                id="create-role-desc"
                 value={newRoleForm.description}
                 onChange={(e) => setNewRoleForm((f) => ({ ...f, description: e.target.value }))}
                 className="mt-1 w-full rounded-md border px-3 py-2"

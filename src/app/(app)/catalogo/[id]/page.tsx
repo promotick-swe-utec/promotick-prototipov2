@@ -91,7 +91,7 @@ function InfoItem({
   mono?: boolean;
 }) {
   return (
-    <div>
+    <dl>
       <dt className="mb-1 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-gray-400">
         {icon}
         {label}
@@ -101,7 +101,7 @@ function InfoItem({
       >
         {value || "--"}
       </dd>
-    </div>
+    </dl>
   );
 }
 
