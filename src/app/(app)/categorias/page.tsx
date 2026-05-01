@@ -671,7 +671,7 @@ export default function CategoriasPage() {
                 id="create-category-name"
                 value={createCategoryForm.name}
                 onChange={(e) => setCreateCategoryForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {createCategoryErrors.name && <p className="mt-1 text-xs text-red-600">{createCategoryErrors.name}</p>}
             </div>
@@ -683,7 +683,7 @@ export default function CategoriasPage() {
                 value={createCategoryForm.code}
                 maxLength={2}
                 onChange={(e) => setCreateCategoryForm((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                className="mt-1 w-full rounded-md border px-3 py-2 uppercase"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {createCategoryErrors.code && <p className="mt-1 text-xs text-red-600">{createCategoryErrors.code}</p>}
             </div>
@@ -694,7 +694,7 @@ export default function CategoriasPage() {
                 id="create-category-description"
                 value={createCategoryForm.description}
                 onChange={(e) => setCreateCategoryForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 rows={3}
               />
               {createCategoryErrors.description && <p className="mt-1 text-xs text-red-600">{createCategoryErrors.description}</p>}
@@ -719,7 +719,7 @@ export default function CategoriasPage() {
                   setIsCreatingCategory(false);
                   resetCreateCategoryForm();
                 }}
-                className="rounded-lg border px-4 py-2 text-sm"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancelar
               </button>
@@ -742,7 +742,7 @@ export default function CategoriasPage() {
                 id="create-subcategory-parent"
                 value={categoryList.find((category) => category.id === createSubcategoryCategoryId)?.name || ""}
                 disabled
-                className="mt-1 w-full rounded-md border bg-gray-50 px-3 py-2 text-gray-600"
+                className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:outline-none"
               />
               {createSubcategoryErrors.categoryId && <p className="mt-1 text-xs text-red-600">{createSubcategoryErrors.categoryId}</p>}
             </div>
@@ -753,7 +753,7 @@ export default function CategoriasPage() {
                 id="create-subcategory-name"
                 value={createSubcategoryForm.name}
                 onChange={(e) => setCreateSubcategoryForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {createSubcategoryErrors.name && <p className="mt-1 text-xs text-red-600">{createSubcategoryErrors.name}</p>}
             </div>
@@ -765,7 +765,7 @@ export default function CategoriasPage() {
                 value={createSubcategoryForm.code}
                 onChange={(e) => setCreateSubcategoryForm((prev) => ({ ...prev, code: e.target.value.replace(/\D/g, "") }))}
                 inputMode="numeric"
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {createSubcategoryErrors.code && <p className="mt-1 text-xs text-red-600">{createSubcategoryErrors.code}</p>}
             </div>
@@ -776,7 +776,7 @@ export default function CategoriasPage() {
                 id="create-subcategory-description"
                 value={createSubcategoryForm.description}
                 onChange={(e) => setCreateSubcategoryForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 rows={3}
               />
               {createSubcategoryErrors.description && <p className="mt-1 text-xs text-red-600">{createSubcategoryErrors.description}</p>}
@@ -801,7 +801,7 @@ export default function CategoriasPage() {
                   setIsCreatingSubcategory(false);
                   resetCreateSubcategoryForm();
                 }}
-                className="rounded-lg border px-4 py-2 text-sm"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancelar
               </button>
@@ -824,7 +824,7 @@ export default function CategoriasPage() {
                 id="edit-category-name"
                 value={editCategoryForm.name}
                 onChange={(e) => setEditCategoryForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {editCategoryErrors.name && <p className="mt-1 text-xs text-red-600">{editCategoryErrors.name}</p>}
             </div>
@@ -836,7 +836,7 @@ export default function CategoriasPage() {
                 value={editCategoryForm.code}
                 maxLength={2}
                 onChange={(e) => setEditCategoryForm((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                className="mt-1 w-full rounded-md border px-3 py-2 uppercase"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {editCategoryErrors.code && <p className="mt-1 text-xs text-red-600">{editCategoryErrors.code}</p>}
             </div>
@@ -847,7 +847,7 @@ export default function CategoriasPage() {
                 id="edit-category-description"
                 value={editCategoryForm.description}
                 onChange={(e) => setEditCategoryForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 rows={3}
               />
               {editCategoryErrors.description && <p className="mt-1 text-xs text-red-600">{editCategoryErrors.description}</p>}
@@ -869,7 +869,7 @@ export default function CategoriasPage() {
               <button
                 type="button"
                 onClick={resetEditCategoryForm}
-                className="rounded-lg border px-4 py-2 text-sm"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancelar
               </button>
@@ -892,7 +892,7 @@ export default function CategoriasPage() {
                 id="edit-subcategory-code"
                 value={editSubcategoryForm.code}
                 onChange={(e) => setEditSubcategoryForm((prev) => ({ ...prev, code: e.target.value.replace(/\D/g, "") }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {editSubcategoryErrors.code && <p className="mt-1 text-xs text-red-600">{editSubcategoryErrors.code}</p>}
             </div>
@@ -903,7 +903,7 @@ export default function CategoriasPage() {
                 id="edit-subcategory-name"
                 value={editSubcategoryForm.name}
                 onChange={(e) => setEditSubcategoryForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
               />
               {editSubcategoryErrors.name && <p className="mt-1 text-xs text-red-600">{editSubcategoryErrors.name}</p>}
             </div>
@@ -926,7 +926,7 @@ export default function CategoriasPage() {
                 id="edit-subcategory-description"
                 value={editSubcategoryForm.description}
                 onChange={(e) => setEditSubcategoryForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="mt-1 w-full rounded-md border px-3 py-2"
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 rows={3}
               />
               {editSubcategoryErrors.description && <p className="mt-1 text-xs text-red-600">{editSubcategoryErrors.description}</p>}
@@ -936,7 +936,7 @@ export default function CategoriasPage() {
               <button
                 type="button"
                 onClick={resetEditSubcategoryForm}
-                className="rounded-lg border px-4 py-2 text-sm"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancelar
               </button>
