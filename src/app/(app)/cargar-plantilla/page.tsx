@@ -141,8 +141,7 @@ function StepUpload({
   const activeSuppliers = suppliers.filter((s) => s.isActive);
   const filtered = activeSuppliers.filter(
     (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.code.toLowerCase().includes(search.toLowerCase()),
+      s.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const selectedName = activeSuppliers.find(
@@ -265,7 +264,6 @@ function StepUpload({
                         } ${String(s.id) === selectedSupplier ? "font-medium" : ""}`}
                       >
                         <span>{s.name}</span>
-                        <span className="text-xs text-gray-400">({s.code})</span>
                       </button>
                     </li>
                   ))}

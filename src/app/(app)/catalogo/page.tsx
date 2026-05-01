@@ -13,6 +13,7 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  ToggleRight,
 } from "lucide-react";
 import { products, categories, productPrices, type Product } from "@/lib/mock-data";
 
@@ -79,10 +80,19 @@ export default function CatalogoPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [brandFilter, setBrandFilter] = useState("");
   const [page, setPage] = useState(1);
+  const [productList, setProductList] = useState<Product[]>(products);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  function handleToggleStatus(id: number, currentStatus: Product["status"]) {
+    const nextStatus = currentStatus === "active" ? "inactive" : "active";
+    setProductList((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, status: nextStatus } : p)),
+    );
+  }
 
   /* ── Filtered list ── */
   const filtered = useMemo(() => {
-    let list: Product[] = products;
+    let list: Product[] = [...productList];
 
     // Category
     if (categoryFilter !== "all") {
@@ -114,7 +124,7 @@ export default function CatalogoPage() {
     }
 
     return list;
-  }, [search, categoryFilter, statusFilter, brandFilter]);
+  }, [search, categoryFilter, statusFilter, brandFilter, productList]);
 
   /* ── Pagination ── */
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
@@ -142,14 +152,6 @@ export default function CatalogoPage() {
             Gestiona y consulta todos los productos del catálogo maestro
           </p>
         </div>
-
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-black/10 transition-colors hover:bg-gray-50"
-        >
-          <Download className="h-4 w-4" />
-          Exportar Listado
-        </button>
       </div>
 
       {/* ── Search + Filters card ── */}
@@ -213,16 +215,27 @@ export default function CatalogoPage() {
         </div>
       </div>
 
-      {/* ── Results counter ── */}
-      <div className="mb-4 flex items-center gap-2">
-        <Package className="h-4 w-4 text-gray-400" />
-        <p className="text-sm text-gray-500">
-          Mostrando{" "}
-          <span className="font-semibold text-gray-900">{paginated.length}</span>{" "}
-          de{" "}
-          <span className="font-semibold text-gray-900">{filtered.length}</span>{" "}
-          productos
-        </p>
+      {/* ── Results counter & Legend ── */}
+      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <Package className="h-4 w-4 text-gray-400" />
+          <p className="text-sm text-gray-500">
+            Mostrando{" "}
+            <span className="font-semibold text-gray-900">{paginated.length}</span>{" "}
+            de{" "}
+            <span className="font-semibold text-gray-900">{filtered.length}</span>{" "}
+            productos
+          </p>
+        </div>
+        
+        {/* Leyenda de Estados */}
+        <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-3 py-2 text-xs shadow-sm">
+          <span className="font-medium text-gray-500">Leyenda:</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-green-500"></span> Activo</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-500"></span> Inactivo</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-yellow-500"></span> Borrador</span>
+          <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-blue-500"></span> Pendiente</span>
+        </div>
       </div>
 
       {/* ── Data table card ── */}
@@ -311,25 +324,39 @@ export default function CatalogoPage() {
                             href={`/catalogo/${p.id}`}
                             onClick={(e) => e.stopPropagation()}
                             title="Ver detalle"
-                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           </Link>
                           <button
                             type="button"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingProduct(p);
+                            }}
                             title="Editar"
-                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
                           <button
                             type="button"
-                            onClick={(e) => e.stopPropagation()}
-                            title="Desactivar"
-                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleStatus(p.id, p.status);
+                            }}
+                            title={p.status === "active" ? "Desactivar" : "Activar"}
+                            className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${
+                              p.status === "active"
+                                ? "text-brand-500 hover:bg-brand-50 hover:text-brand-700"
+                                : "text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                            }`}
                           >
-                            <ToggleLeft className="h-4 w-4" />
+                            {p.status === "active" ? (
+                              <ToggleRight className="h-4 w-4" />
+                            ) : (
+                              <ToggleLeft className="h-4 w-4" />
+                            )}
                           </button>
                         </div>
                       </td>
@@ -388,6 +415,50 @@ export default function CatalogoPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Edit Modal ── */}
+      {editingProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Editar Producto</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Nombre del producto</label>
+                <input
+                  type="text"
+                  defaultValue={editingProduct.displayName}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Precio Oficial (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  defaultValue={editingProduct.officialPrice}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setEditingProduct(null)}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingProduct(null)}
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+              >
+                Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
