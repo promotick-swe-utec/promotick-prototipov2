@@ -15,6 +15,7 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { suppliers, products, type Supplier } from "@/lib/mock-data";
+import { isValidEmail, isValidPhone, isValidRUC } from "@/lib/validators";
 import Link from "next/link";
 
 type StatusFilter = "all" | "active" | "inactive" | "preferred";
@@ -355,14 +356,10 @@ export default function ProveedoresPage() {
                       <tr key={`details-${s.id}`} className="bg-gray-50">
                         <td colSpan={7} className="px-6 py-3 text-sm text-gray-700">
                           <div className="grid gap-4 sm:flex sm:items-center sm:justify-between">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-6">
                               <div>
                                 <p className="text-xs text-gray-500">Contacto</p>
-                                <p className="font-medium text-gray-900">{s.contactPhone ?? "-"}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-500">Email</p>
-                                <p className="font-medium text-gray-900">{s.contactEmail ?? "-"}</p>
+                                <p className="font-medium text-gray-900">{s.contactPhone || "-"}</p>
                               </div>
                             </div>
 
@@ -412,48 +409,157 @@ export default function ProveedoresPage() {
             <h2 className="mb-4 text-xl font-bold text-gray-900">
               {editingSupplier ? "Editar Proveedor" : "Nuevo Proveedor"}
             </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Razón Social</label>
-                <input
-                  type="text"
-                  defaultValue={editingSupplier?.name || ""}
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const name = formData.get("name") as string;
+                const ruc = formData.get("ruc") as string;
+                const code = formData.get("code") as string;
+                const contactEmail = formData.get("contactEmail") as string;
+                const contactPhone = formData.get("contactPhone") as string;
+                const preferred = formData.get("preferred") === "on";
+                const isActive = formData.get("isActive") === "on";
+
+                // Validaciones con la librería
+                if (!isValidRUC(ruc)) {
+                  alert("El RUC debe tener 11 dígitos numéricos");
+                  return;
+                }
+                if (!isValidEmail(contactEmail)) {
+                  alert("Ingresa un correo electrónico válido");
+                  return;
+                }
+                if (contactPhone && !isValidPhone(contactPhone)) {
+                  alert("Debe ser un número de teléfono válido");
+                  return;
+                }
+
+                if (editingSupplier) {
+                  setList((prev) => prev.map(s => s.id === editingSupplier.id ? { ...s, name, ruc, code, contactEmail, contactPhone, preferred, isActive } : s));
+                } else {
+                  setList((prev) => [{
+                    id: Date.now(),
+                    name,
+                    ruc,
+                    code,
+                    contactEmail,
+                    contactPhone,
+                    preferred,
+                    isActive,
+                    uploadsCount: 0,
+                    lastUpload: null
+                  }, ...prev]);
+                }
+                
+                setIsFormOpen(false);
+              }}
+            >
+              <div className="max-h-[70vh] overflow-y-auto pr-2 space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">Razón Social <span className="text-red-500">*</span></label>
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    defaultValue={editingSupplier?.name || ""}
+                    onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Este campo es obligatorio")}
+                    onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">RUC <span className="text-red-500">*</span></label>
+                  <input
+                    name="ruc"
+                    type="text"
+                    required
+                    pattern="[0-9]{11}"
+                    maxLength={11}
+                    defaultValue={editingSupplier?.ruc || ""}
+                    onInvalid={(e) => {
+                      const t = e.target as HTMLInputElement;
+                      if (t.validity.valueMissing) t.setCustomValidity("El RUC es obligatorio");
+                      else t.setCustomValidity("El RUC debe tener 11 dígitos numéricos");
+                    }}
+                    onInput={(e) => {
+                      const t = e.target as HTMLInputElement;
+                      t.value = t.value.replace(/[^0-9]/g, ""); // Only numbers
+                      t.setCustomValidity("");
+                    }}
+                    className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">Email Contacto <span className="text-red-500">*</span></label>
+                    <input
+                      name="contactEmail"
+                      type="email"
+                      required
+                      defaultValue={editingSupplier?.contactEmail || ""}
+                      onInvalid={(e) => {
+                        const t = e.target as HTMLInputElement;
+                        if (t.validity.valueMissing) t.setCustomValidity("El Email es obligatorio");
+                        else t.setCustomValidity("Ingresa un correo electrónico válido");
+                      }}
+                      onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                      className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">Teléfono</label>
+                    <input
+                      name="contactPhone"
+                      type="tel"
+                      pattern="[\+]?[0-9\s\-\(\)]{7,15}"
+                      defaultValue={editingSupplier?.contactPhone || ""}
+                      onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Debe ser un número de teléfono válido")}
+                      onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+                      className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      name="preferred"
+                      type="checkbox"
+                      defaultChecked={editingSupplier ? editingSupplier.preferred : false}
+                      className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Proveedor Preferido</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      name="isActive"
+                      type="checkbox"
+                      defaultChecked={editingSupplier ? editingSupplier.isActive : true}
+                      className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Estado Activo</span>
+                  </label>
+                </div>
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">RUC</label>
-                <input
-                  type="text"
-                  defaultValue={editingSupplier?.ruc || ""}
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsFormOpen(false)}
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+                >
+                  Guardar
+                </button>
               </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  defaultValue={editingSupplier?.contactEmail || ""}
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setIsFormOpen(false)}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsFormOpen(false)}
-                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
-              >
-                Guardar
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
