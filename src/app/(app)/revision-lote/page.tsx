@@ -739,6 +739,7 @@ export default function RevisionLotePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("new");
   const [isBatchConfirmed, setIsBatchConfirmed] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [confirmedIds, setConfirmedIds] = useState<Set<number>>(new Set());
   const [rejectedIds, setRejectedIds] = useState<Set<number>>(new Set());
 
@@ -782,6 +783,7 @@ export default function RevisionLotePage() {
   /* ── New rows actions ── */
   function handleConfirm(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setConfirmedIds((prev) => {
       const next = new Set(prev);
       if (next.has(rowNumber)) {
@@ -800,6 +802,7 @@ export default function RevisionLotePage() {
 
   function handleReject(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setRejectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(rowNumber)) {
@@ -818,12 +821,14 @@ export default function RevisionLotePage() {
 
   function handleConfirmAll() {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setConfirmedIds(new Set(newRows.map((r) => r.rowNumber)));
     setRejectedIds(new Set());
   }
 
   function handleRejectAll() {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setRejectedIds(new Set(newRows.map((r) => r.rowNumber)));
     setConfirmedIds(new Set());
   }
@@ -831,6 +836,7 @@ export default function RevisionLotePage() {
   /* ── Duplicate actions ── */
   function handleMerge(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     const row = duplicateRows.find((r) => r.rowNumber === rowNumber);
     if (!row || !row.duplicateOf) return;
 
@@ -845,11 +851,13 @@ export default function RevisionLotePage() {
 
   function handleKeepBoth(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setDupResolutions((prev) => ({ ...prev, [rowNumber]: "kept_both" }));
   }
 
   function handleRejectDuplicate(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setDupResolutions((prev) => ({ ...prev, [rowNumber]: "rejected" }));
     setMergedProducts((prev) => {
       const next = { ...prev };
@@ -860,6 +868,7 @@ export default function RevisionLotePage() {
 
   function handleUndoDuplicate(rowNumber: number) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setDupResolutions((prev) => {
       const next = { ...prev };
       delete next[rowNumber];
@@ -875,6 +884,7 @@ export default function RevisionLotePage() {
   /* ── Error corrections ── */
   function handleErrorCorrect(rowNumber: number, category: string) {
     setIsBatchConfirmed(false);
+    setIsConfirmModalOpen(false);
     setErrorCorrections((prev) => {
       if (!category) {
         const next = { ...prev };
@@ -935,145 +945,183 @@ export default function RevisionLotePage() {
         />
       </div>
 
-      {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex gap-6">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.key;
-            return (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setActiveTab(tab.key)}
-                className={`inline-flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${isActive
-                  ? "border-brand-600 text-brand-600"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                  }`}
-              >
-                {tab.label}
-                <span
-                  className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${isActive
-                    ? "bg-brand-100 text-brand-700"
-                    : "bg-gray-100 text-gray-500"
+      <div className={isBatchConfirmed ? "pointer-events-none opacity-50 transition-opacity duration-300" : "transition-opacity duration-300"}>
+        {/* Tabs */}
+        <div className="mb-6 border-b border-gray-200">
+          <nav className="-mb-px flex gap-6">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`inline-flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-semibold transition-colors ${isActive
+                    ? "border-brand-600 text-brand-600"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                     }`}
                 >
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+                  {tab.label}
+                  <span
+                    className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${isActive
+                      ? "bg-brand-100 text-brand-700"
+                      : "bg-gray-100 text-gray-500"
+                      }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
 
-      {/* Tab content */}
-      <div>
-        {activeTab === "new" && (
-          <NuevosTab
-            rows={newRows}
-            confirmedIds={confirmedIds}
-            rejectedIds={rejectedIds}
-            onConfirm={handleConfirm}
-            onReject={handleReject}
-            onConfirmAll={handleConfirmAll}
-            onRejectAll={handleRejectAll}
-          />
-        )}
-        {activeTab === "duplicate" && (
-          <DuplicadosTab
-            rows={duplicateRows}
-            resolutions={dupResolutions}
-            mergedProducts={mergedProducts}
-            onMerge={handleMerge}
-            onKeepBoth={handleKeepBoth}
-            onReject={handleRejectDuplicate}
-            onUndo={handleUndoDuplicate}
-          />
-        )}
-        {activeTab === "error" && (
-          <ErroresTab
-            rows={errorRows}
-            corrections={errorCorrections}
-            onCorrect={handleErrorCorrect}
-          />
-        )}
+        {/* Tab content */}
+        <div>
+          {activeTab === "new" && (
+            <NuevosTab
+              rows={newRows}
+              confirmedIds={confirmedIds}
+              rejectedIds={rejectedIds}
+              onConfirm={handleConfirm}
+              onReject={handleReject}
+              onConfirmAll={handleConfirmAll}
+              onRejectAll={handleRejectAll}
+            />
+          )}
+          {activeTab === "duplicate" && (
+            <DuplicadosTab
+              rows={duplicateRows}
+              resolutions={dupResolutions}
+              mergedProducts={mergedProducts}
+              onMerge={handleMerge}
+              onKeepBoth={handleKeepBoth}
+              onReject={handleRejectDuplicate}
+              onUndo={handleUndoDuplicate}
+            />
+          )}
+          {activeTab === "error" && (
+            <ErroresTab
+              rows={errorRows}
+              corrections={errorCorrections}
+              onCorrect={handleErrorCorrect}
+            />
+          )}
+        </div>
       </div>
 
       {/* Bottom sticky bar */}
-      <div className="fixed bottom-0 left-64 right-0 z-40 border-t border-gray-200 bg-white/95 px-8 py-4 backdrop-blur-sm">
-        {isBatchConfirmed ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+      {!isBatchConfirmed && (
+        <div className="fixed bottom-0 left-64 right-0 z-40 border-t border-gray-200 bg-white/95 px-8 py-4 backdrop-blur-sm transition-all duration-300">
+          {isConfirmModalOpen ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+                  <AlertTriangle className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-gray-900">
+                    Confirmar Lote
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    ¿Está seguro de que desea confirmar este lote? Una vez confirmado, no podrá hacer más modificaciones en esta revisión.
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-base font-bold text-gray-900">
-                  ¡Lote confirmado exitosamente!
-                </p>
-                <p className="text-sm text-gray-500">
-                  Los productos han sido registrados. ¿Desea exportar el listado?
-                </p>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmModalOpen(false)}
+                  className="rounded-lg px-6 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsConfirmModalOpen(false);
+                    setIsBatchConfirmed(true);
+                  }}
+                  className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 transition-colors"
+                >
+                  Sí, confirmar
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+          ) : (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50">
+                  <CheckCircle className="h-5 w-5 text-brand-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {confirmedCount} de {totalActionable} confirmados
+                    {resolvedDupCount > 0 && (
+                      <span className="ml-1.5 text-xs font-normal text-gray-500">
+                        ({resolvedDupCount} fusionado{resolvedDupCount > 1 ? "s" : ""})
+                      </span>
+                    )}
+                  </p>
+                  <div className="mt-0.5 h-1.5 w-32 overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      className="h-full rounded-full bg-brand-500 transition-all duration-300"
+                      style={{
+                        width: `${totalActionable > 0
+                          ? (confirmedCount / totalActionable) * 100
+                          : 0
+                          }%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                disabled={confirmedCount === 0}
+                onClick={() => setIsConfirmModalOpen(true)}
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/30 transition-all hover:bg-brand-700 hover:shadow-brand-600/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
+              >
+                Confirmar Lote
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Redirection Modal */}
+      {isBatchConfirmed && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm transition-opacity">
+          <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-2xl text-center transform transition-all">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-5">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <h3 className="mb-2 text-xl font-extrabold text-gray-900">¡Lote confirmado exitosamente!</h3>
+            <p className="mb-8 text-sm text-gray-600">
+              Los productos han sido registrados correctamente en el sistema maestro. ¿Desea exportar el listado ahora?
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
               <button
                 type="button"
                 onClick={() => router.push("/catalogo")}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-900"
+                className="rounded-lg border border-gray-200 bg-white px-6 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors w-full sm:w-auto"
               >
                 No, ir al catálogo
               </button>
               <button
                 type="button"
                 onClick={() => router.push("/exportar")}
-                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-600/30 transition-all hover:bg-brand-700 hover:shadow-brand-600/50"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 transition-colors w-full sm:w-auto"
               >
                 <Download className="h-4 w-4" />
                 Sí, exportar
               </button>
             </div>
           </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50">
-                <CheckCircle className="h-5 w-5 text-brand-600" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">
-                  {confirmedCount} de {totalActionable} confirmados
-                  {resolvedDupCount > 0 && (
-                    <span className="ml-1.5 text-xs font-normal text-gray-500">
-                      ({resolvedDupCount} fusionado{resolvedDupCount > 1 ? "s" : ""})
-                    </span>
-                  )}
-                </p>
-                <div className="mt-0.5 h-1.5 w-32 overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="h-full rounded-full bg-brand-500 transition-all duration-300"
-                    style={{
-                      width: `${totalActionable > 0
-                        ? (confirmedCount / totalActionable) * 100
-                        : 0
-                        }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              disabled={confirmedCount === 0}
-              onClick={() => setIsBatchConfirmed(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/30 transition-all hover:bg-brand-700 hover:shadow-brand-600/50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-            >
-              Confirmar Lote
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
