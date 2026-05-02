@@ -5,7 +5,6 @@ import {
   Search,
   Plus,
   Star,
-  Pencil,
   FileText,
   ToggleLeft,
   ToggleRight,
@@ -74,6 +73,74 @@ export default function ProveedoresPage() {
 
   // Form state
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    ruc: "",
+    contactEmail: "",
+    contactPhone: "",
+    preferred: false,
+    isActive: true,
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Validations
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "La razón social es requerida";
+    }
+
+    if (!formData.ruc.trim()) {
+      newErrors.ruc = "El RUC es requerido";
+    } else if (!/^\d{11}$/.test(formData.ruc.trim())) {
+      newErrors.ruc = "El RUC debe tener exactamente 11 dígitos";
+    }
+
+    if (!formData.contactEmail.trim()) {
+      newErrors.contactEmail = "El email es requerido";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail.trim())) {
+      newErrors.contactEmail = "El email debe contener @";
+    }
+
+    if (!formData.contactPhone.trim()) {
+      newErrors.contactPhone = "El teléfono es requerido";
+    } else if (!/^\d{9}$/.test(formData.contactPhone.trim())) {
+      newErrors.contactPhone = "El teléfono debe tener exactamente 9 dígitos";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  function handleSaveSupplier() {
+    if (!validateForm()) return;
+
+    const newSupplier: Supplier = {
+      id: Math.max(...list.map((s) => s.id), 0) + 1,
+      name: formData.name.trim(),
+      code: formData.ruc.trim(),
+      ruc: formData.ruc.trim(),
+      contactEmail: formData.contactEmail.trim(),
+      contactPhone: formData.contactPhone.trim(),
+      preferred: formData.preferred,
+      isActive: formData.isActive,
+      uploadsCount: 0,
+      lastUpload: null,
+    };
+
+    setList((prev) => [...prev, newSupplier]);
+    setIsFormOpen(false);
+    setFormData({
+      name: "",
+      ruc: "",
+      contactEmail: "",
+      contactPhone: "",
+      preferred: false,
+      isActive: true,
+    });
+    setErrors({});
+  }
 
   function handleSort(key: "cargas" | "ultimaCarga" | "estado") {
     let direction: "asc" | "desc" = "desc";
@@ -398,42 +465,130 @@ export default function ProveedoresPage() {
               Nuevo Proveedor
             </h2>
             <div className="space-y-4">
+              {/* Razón Social */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Razón Social</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Razón Social *</label>
                 <input
                   type="text"
+                  value={formData.name}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (errors.name) setErrors({ ...errors, name: "" });
+                  }}
                   placeholder="Ingrese la razón social"
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className={`w-full rounded-lg border p-2 text-sm focus:outline-none focus:ring-1 ${errors.name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:border-brand-500 focus:ring-brand-500"
+                    }`}
                 />
+                {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
               </div>
+
+              {/* RUC */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">RUC</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">RUC (11 dígitos) *</label>
                 <input
                   type="text"
+                  value={formData.ruc}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, ruc: value });
+                    if (errors.ruc) setErrors({ ...errors, ruc: "" });
+                  }}
                   placeholder="Ingrese el RUC"
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  maxLength={11}
+                  className={`w-full rounded-lg border p-2 text-sm focus:outline-none focus:ring-1 ${errors.ruc
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:border-brand-500 focus:ring-brand-500"
+                    }`}
                 />
+                {errors.ruc && <p className="mt-1 text-xs text-red-600">{errors.ruc}</p>}
               </div>
+
+              {/* Email */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Email</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Email Contacto *</label>
                 <input
                   type="email"
-                  placeholder="Ingrese el email"
-                  className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  value={formData.contactEmail}
+                  onChange={(e) => {
+                    setFormData({ ...formData, contactEmail: e.target.value });
+                    if (errors.contactEmail) setErrors({ ...errors, contactEmail: "" });
+                  }}
+                  placeholder="ejemplo@gmail.com"
+                  className={`w-full rounded-lg border p-2 text-sm focus:outline-none focus:ring-1 ${errors.contactEmail
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:border-brand-500 focus:ring-brand-500"
+                    }`}
                 />
+                {errors.contactEmail && <p className="mt-1 text-xs text-red-600">{errors.contactEmail}</p>}
+              </div>
+
+              {/* Teléfono */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Teléfono (9 dígitos) *</label>
+                <input
+                  type="tel"
+                  value={formData.contactPhone}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, "");
+                    setFormData({ ...formData, contactPhone: value });
+                    if (errors.contactPhone) setErrors({ ...errors, contactPhone: "" });
+                  }}
+                  placeholder="987654321"
+                  maxLength={9}
+                  className={`w-full rounded-lg border p-2 text-sm focus:outline-none focus:ring-1 ${errors.contactPhone
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 focus:border-brand-500 focus:ring-brand-500"
+                    }`}
+                />
+                {errors.contactPhone && <p className="mt-1 text-xs text-red-600">{errors.contactPhone}</p>}
+              </div>
+
+              {/* Proveedor Preferido */}
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.preferred}
+                    onChange={(e) =>
+                      setFormData({ ...formData, preferred: e.target.checked })
+                    }
+                    className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Proveedor Preferido</span>
+                </label>
+              </div>
+
+              {/* Estado */}
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) =>
+                      setFormData({ ...formData, isActive: e.target.checked })
+                    }
+                    className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Activo</span>
+                </label>
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setIsFormOpen(false)}
+                onClick={() => {
+                  setIsFormOpen(false);
+                  setErrors({});
+                }}
                 className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Cancelar
               </button>
               <button
                 type="button"
-                onClick={() => setIsFormOpen(false)}
+                onClick={handleSaveSupplier}
                 className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
               >
                 Guardar
