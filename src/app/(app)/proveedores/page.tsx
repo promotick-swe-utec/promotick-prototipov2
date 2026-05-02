@@ -221,7 +221,7 @@ export default function ProveedoresPage() {
                 <th className="py-3.5 pl-6 pr-3">Razón Social</th>
                 <th className="px-3 py-3.5">RUC</th>
                 <th className="px-3 py-3.5">Email</th>
-                <th 
+                <th
                   className="group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-gray-100 focus:outline-none"
                   onClick={() => handleSort("cargas")}
                 >
@@ -229,7 +229,7 @@ export default function ProveedoresPage() {
                     Cargas {getSortIcon("cargas")}
                   </div>
                 </th>
-                <th 
+                <th
                   className="group cursor-pointer select-none px-3 py-3.5 transition-colors hover:bg-gray-100 focus:outline-none"
                   onClick={() => handleSort("ultimaCarga")}
                 >
@@ -237,7 +237,7 @@ export default function ProveedoresPage() {
                     Última Carga {getSortIcon("ultimaCarga")}
                   </div>
                 </th>
-                <th 
+                <th
                   className="group cursor-pointer select-none px-3 py-3.5 text-center transition-colors hover:bg-gray-100 focus:outline-none"
                   onClick={() => handleSort("estado")}
                 >
@@ -303,14 +303,6 @@ export default function ProveedoresPage() {
                       {/* Actions */}
                       <td className="py-4 pl-3 pr-6">
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(s)}
-                            title="Editar proveedor"
-                            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </button>
                           <Link
                             href={`/proveedores/${s.id}/cargas`}
                             title="Ver historial de cargas"
@@ -409,7 +401,7 @@ export default function ProveedoresPage() {
             <h2 className="mb-4 text-xl font-bold text-gray-900">
               {editingSupplier ? "Editar Proveedor" : "Nuevo Proveedor"}
             </h2>
-            <form 
+            <form
               onSubmit={(e) => {
                 e.preventDefault();
                 const formData = new FormData(e.currentTarget);
@@ -451,7 +443,7 @@ export default function ProveedoresPage() {
                     lastUpload: null
                   }, ...prev]);
                 }
-                
+
                 setIsFormOpen(false);
               }}
             >
@@ -468,7 +460,7 @@ export default function ProveedoresPage() {
                     className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
                   />
                 </div>
-                
+
                 <div>
                   <label className="mb-1 block text-sm font-medium text-gray-700">RUC <span className="text-red-500">*</span></label>
                   <input
