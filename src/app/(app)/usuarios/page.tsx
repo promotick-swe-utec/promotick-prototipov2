@@ -349,6 +349,13 @@ function MatrizPermisosTab() {
     });
     return initialState;
   });
+  const [savedMatrixState, setSavedMatrixState] = useState<Record<number, string[]>>(() => {
+    const initialState: Record<number, string[]> = {};
+    roles.forEach((r) => {
+      initialState[r.id] = [...r.permissions];
+    });
+    return initialState;
+  });
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -379,12 +386,22 @@ function MatrizPermisosTab() {
     });
   };
 
+  const cloneMatrixState = (state: Record<number, string[]>) =>
+    Object.fromEntries(
+      Object.entries(state).map(([roleId, permissions]) => [roleId, [...permissions]])
+    ) as Record<number, string[]>;
+
   const handleSave = () => {
     setIsSaving(true);
+    setSavedMatrixState(cloneMatrixState(matrixState));
     // TODO: Conectar guardado con la API aquí en el futuro
     setTimeout(() => {
       setIsSaving(false);
     }, 600);
+  };
+
+  const handleUndo = () => {
+    setMatrixState(cloneMatrixState(savedMatrixState));
   };
 
   return (
@@ -482,7 +499,7 @@ function MatrizPermisosTab() {
 
       {/* Footer */}
       <div className="border-t border-gray-100 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <p className="text-sm text-gray-500">
             <span className="font-medium text-gray-900">
               {allPermissions.length}
@@ -493,17 +510,30 @@ function MatrizPermisosTab() {
             </span>{" "}
             módulos
           </p>
-          <button
-            type="button"
-            disabled={isSaving}
-            onClick={handleSave}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors ${isSaving
-              ? "bg-brand-400 cursor-wait"
-              : "bg-brand-600 hover:bg-brand-700"
-              }`}
-          >
-            {isSaving ? "Guardando..." : "Guardar Cambios"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={isSaving}
+              onClick={handleUndo}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors ${isSaving
+                ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-400"
+                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+            >
+              Deshacer
+            </button>
+            <button
+              type="button"
+              disabled={isSaving}
+              onClick={handleSave}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors ${isSaving
+                ? "bg-brand-400 cursor-wait"
+                : "bg-brand-600 hover:bg-brand-700"
+                }`}
+            >
+              {isSaving ? "Guardando..." : "Guardar Cambios"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
