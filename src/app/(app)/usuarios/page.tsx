@@ -49,6 +49,14 @@ function fmtDate(iso: string | null): string {
   return iso;
 }
 
+function groupPermissionsByModule() {
+  return allPermissions.reduce<Record<string, typeof allPermissions>>((acc, perm) => {
+    if (!acc[perm.module]) acc[perm.module] = [];
+    acc[perm.module].push(perm);
+    return acc;
+  }, {});
+}
+
 const CORPORATE_PASSWORD_MIN_LENGTH = 12;
 
 function validateCorporatePasswordPolicy(password: string): string | null {
@@ -556,6 +564,20 @@ export default function UsuariosPage() {
   function resetNewRoleForm() {
     setNewRoleForm({ name: "", description: "", permissions: [], isSystem: false });
     setNewRoleFormErrors({});
+  }
+
+  function toggleNewRolePermission(permissionCode: string) {
+    setNewRoleForm((prev) => {
+      const currentPermissions = prev.permissions || [];
+      const hasPermission = currentPermissions.includes(permissionCode);
+
+      return {
+        ...prev,
+        permissions: hasPermission
+          ? currentPermissions.filter((code) => code !== permissionCode)
+          : [...currentPermissions, permissionCode],
+      };
+    });
   }
 
   function handleCreateRole(e: any) {
@@ -1195,7 +1217,7 @@ export default function UsuariosPage() {
       {/* Create role modal */}
       {isCreatingRole && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <form onSubmit={handleCreateRole} className="w-full max-w-md rounded-lg bg-white p-6">
+          <form onSubmit={handleCreateRole} className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">Nuevo Rol</h3>
             {roleSuccessMessage && (
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{roleSuccessMessage}</div>
@@ -1228,6 +1250,34 @@ export default function UsuariosPage() {
                 className="mt-1 w-full rounded-md border px-3 py-2"
                 rows={3}
               />
+            </div>
+
+            <div className="mb-3">
+              <div className="mb-2 flex items-center justify-between">
+                <label className="block text-xs text-gray-600">Permisos</label>
+                <span className="text-xs text-gray-500">{newRoleForm.permissions?.length || 0} seleccionados</span>
+              </div>
+
+              <div className="space-y-4 rounded-lg border border-gray-200 p-4">
+                {Object.entries(groupPermissionsByModule()).map(([module, permissions]) => (
+                  <div key={module} className="rounded-md bg-gray-50/70 p-3">
+                    <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">{module}</h4>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {permissions.map((perm) => (
+                        <label key={perm.code} className="flex items-start gap-2 rounded-md bg-white px-3 py-2 ring-1 ring-inset ring-gray-200">
+                          <input
+                            type="checkbox"
+                            checked={newRoleForm.permissions?.includes(perm.code) ?? false}
+                            onChange={() => toggleNewRolePermission(perm.code)}
+                            className="mt-0.5 rounded border-gray-300"
+                          />
+                          <span className="text-sm text-gray-700">{perm.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="mt-4 flex justify-end gap-2">
