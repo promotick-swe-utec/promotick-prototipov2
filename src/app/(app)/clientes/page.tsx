@@ -638,6 +638,17 @@ export default function ClientesPage() {
               </div>
             </div>
 
+            <div className="mb-3 mt-3">
+              <label className="flex items-center gap-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={!!editForm.isActive}
+                  onChange={(e) => setEditForm(f => ({ ...f, isActive: e.target.checked }))}
+                  className="h-4 w-4 rounded border-gray-300 text-brand-600"
+                />
+                <span>Activo</span>
+              </label>
+            </div>
             <div className="mt-4 flex justify-end gap-2">
               <button type="button" onClick={() => { setIsEditing(false); resetEditForm(); }} className="rounded-lg border px-4 py-2 text-sm">Cancelar</button>
               <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">Guardar</button>
