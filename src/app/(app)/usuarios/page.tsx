@@ -57,6 +57,10 @@ function groupPermissionsByModule() {
   }, {});
 }
 
+function getPermissionName(permissionCode: string): string {
+  return allPermissions.find((perm) => perm.code === permissionCode)?.name || permissionCode;
+}
+
 const CORPORATE_PASSWORD_MIN_LENGTH = 12;
 
 function validateCorporatePasswordPolicy(password: string): string | null {
@@ -313,7 +317,7 @@ function RolesTab({ rolesList, onCreateRole, onEditPermissions }: { rolesList: R
                   key={p}
                   className="inline-flex rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-200"
                 >
-                  {p}
+                  {getPermissionName(p)}
                 </span>
               ))}
             </div>
