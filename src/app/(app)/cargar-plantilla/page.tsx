@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Upload,
   FileSpreadsheet,
@@ -148,6 +149,14 @@ function StepUpload({
   const selectedName = activeSuppliers.find(
     (s) => String(s.id) === selectedSupplier,
   );
+
+  // Sync search input when supplier preselected from outside (e.g. ?ruc= query)
+  useEffect(() => {
+    if (selectedName && search === "") {
+      setSearch(selectedName.name);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedName?.id]);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -705,9 +714,15 @@ function StepProcessing({ onFinish }: { onFinish: () => void }) {
 /* ------------------------------------------------------------------ */
 /*  Main page component                                                 */
 /* ------------------------------------------------------------------ */
-export default function CargarPlantillaPage() {
+function CargarPlantillaInner() {
+  const searchParams = useSearchParams();
+  const rucParam = searchParams.get("ruc");
+  const initialSupplierId = rucParam
+    ? String(suppliers.find((s) => s.ruc === rucParam && s.isActive)?.id ?? "")
+    : "";
+
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState(initialSupplierId);
   const [fileUploaded, setFileUploaded] = useState(false);
 
   return (
@@ -753,5 +768,13 @@ export default function CargarPlantillaPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CargarPlantillaPage() {
+  return (
+    <Suspense fallback={null}>
+      <CargarPlantillaInner />
+    </Suspense>
   );
 }

@@ -131,6 +131,19 @@ export interface UploadRow {
   similarityScore?: number;
 }
 
+export interface SupplierUpload {
+  id: number;
+  supplierId: number;
+  fileName: string;
+  uploadedAt: string;
+  totalRows: number;
+  newProducts: number;
+  duplicates: number;
+  errors: number;
+  status: "completed" | "processing" | "failed" | "pending_review";
+  uploadedBy: string;
+}
+
 export interface ColumnMapping {
   sourceColumn: string;
   targetField: string;
@@ -141,11 +154,42 @@ export interface ColumnMapping {
 // ─── Data ───
 
 export const suppliers: Supplier[] = [
-  { id: 1, name: "Distribuidora Lima SAC", code: "DL001", ruc: "20512345678", contactEmail: "ventas@distlima.pe", contactPhone: "+51 1 234-5678", preferred: true, isActive: true, uploadsCount: 23, lastUpload: "2026-04-25" },
-  { id: 2, name: "Importaciones del Sur EIRL", code: "IS002", ruc: "20687654321", contactEmail: "contacto@importsur.pe", contactPhone: "+51 54 987-6543", preferred: false, isActive: true, uploadsCount: 15, lastUpload: "2026-04-20" },
-  { id: 3, name: "Tech Solutions Peru SA", code: "TS003", ruc: "20798765432", contactEmail: "pedidos@techsol.pe", contactPhone: "+51 1 876-5432", preferred: false, isActive: true, uploadsCount: 8, lastUpload: "2026-04-18" },
-  { id: 4, name: "Global Brands SAC", code: "GB004", ruc: "20654321098", contactEmail: "info@globalbrands.pe", contactPhone: "+51 1 567-8901", preferred: true, isActive: true, uploadsCount: 31, lastUpload: "2026-04-27" },
-  { id: 5, name: "Proveedora Nacional SRL", code: "PN005", ruc: "20543210987", contactEmail: "ventas@provnac.pe", contactPhone: "+51 44 345-6789", preferred: false, isActive: false, uploadsCount: 5, lastUpload: "2026-02-10" },
+  { id: 1, name: "Distribuidora Lima SAC", code: "DL001", ruc: "20512345678", contactEmail: "ventas@distlima.pe", contactPhone: "+51 1 234-5678", preferred: true, isActive: true, uploadsCount: 5, lastUpload: "2026-04-25" },
+  { id: 2, name: "Importaciones del Sur EIRL", code: "IS002", ruc: "20687654321", contactEmail: "contacto@importsur.pe", contactPhone: "+51 54 987-6543", preferred: false, isActive: true, uploadsCount: 4, lastUpload: "2026-04-28" },
+  { id: 3, name: "Tech Solutions Peru SA", code: "TS003", ruc: "20798765432", contactEmail: "pedidos@techsol.pe", contactPhone: "+51 1 876-5432", preferred: false, isActive: true, uploadsCount: 4, lastUpload: "2026-04-18" },
+  { id: 4, name: "Global Brands SAC", code: "GB004", ruc: "20654321098", contactEmail: "info@globalbrands.pe", contactPhone: "+51 1 567-8901", preferred: true, isActive: true, uploadsCount: 4, lastUpload: "2026-04-28" },
+  { id: 5, name: "Proveedora Nacional SRL", code: "PN005", ruc: "20543210987", contactEmail: "ventas@provnac.pe", contactPhone: "+51 44 345-6789", preferred: false, isActive: false, uploadsCount: 2, lastUpload: "2026-02-10" },
+];
+
+export const supplierUploads: SupplierUpload[] = [
+  // Supplier 1 — Distribuidora Lima SAC
+  { id: 101, supplierId: 1, fileName: "lista_precios_abril_2026.xlsx", uploadedAt: "2026-04-25 14:32", totalRows: 156, newProducts: 142, duplicates: 11, errors: 3, status: "completed", uploadedBy: "Ana García" },
+  { id: 102, supplierId: 1, fileName: "catalogo_lima_q1.xlsx", uploadedAt: "2026-04-12 09:15", totalRows: 89, newProducts: 76, duplicates: 13, errors: 0, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 103, supplierId: 1, fileName: "ofertas_marzo.csv", uploadedAt: "2026-03-28 16:45", totalRows: 42, newProducts: 38, duplicates: 4, errors: 0, status: "completed", uploadedBy: "Ana García" },
+  { id: 104, supplierId: 1, fileName: "actualizacion_precios.xlsx", uploadedAt: "2026-03-15 11:20", totalRows: 234, newProducts: 0, duplicates: 234, errors: 0, status: "completed", uploadedBy: "Ana García" },
+  { id: 105, supplierId: 1, fileName: "nuevos_skus_febrero.xlsx", uploadedAt: "2026-02-20 10:00", totalRows: 67, newProducts: 61, duplicates: 5, errors: 1, status: "completed", uploadedBy: "Carlos Mendoza" },
+
+  // Supplier 2 — Importaciones del Sur EIRL
+  { id: 201, supplierId: 2, fileName: "import_sur_abril.xlsx", uploadedAt: "2026-04-20 13:10", totalRows: 78, newProducts: 70, duplicates: 6, errors: 2, status: "completed", uploadedBy: "Ana García" },
+  { id: 202, supplierId: 2, fileName: "skincare_collection.xlsx", uploadedAt: "2026-04-05 15:30", totalRows: 45, newProducts: 41, duplicates: 4, errors: 0, status: "completed", uploadedBy: "Ana García" },
+  { id: 203, supplierId: 2, fileName: "decoracion_marzo.csv", uploadedAt: "2026-03-22 09:45", totalRows: 32, newProducts: 28, duplicates: 4, errors: 0, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 204, supplierId: 2, fileName: "lote_revision.xlsx", uploadedAt: "2026-04-28 08:20", totalRows: 54, newProducts: 0, duplicates: 0, errors: 0, status: "pending_review", uploadedBy: "Ana García" },
+
+  // Supplier 3 — Tech Solutions Peru SA
+  { id: 301, supplierId: 3, fileName: "tech_perifericos_abr.xlsx", uploadedAt: "2026-04-18 14:00", totalRows: 92, newProducts: 85, duplicates: 5, errors: 2, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 302, supplierId: 3, fileName: "audifonos_q1.csv", uploadedAt: "2026-03-30 11:15", totalRows: 28, newProducts: 25, duplicates: 3, errors: 0, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 303, supplierId: 3, fileName: "cargadores_marzo.xlsx", uploadedAt: "2026-03-10 10:30", totalRows: 19, newProducts: 18, duplicates: 1, errors: 0, status: "completed", uploadedBy: "Ana García" },
+  { id: 304, supplierId: 3, fileName: "lote_ssd_fallido.xlsx", uploadedAt: "2026-02-28 16:50", totalRows: 12, newProducts: 0, duplicates: 0, errors: 12, status: "failed", uploadedBy: "Carlos Mendoza" },
+
+  // Supplier 4 — Global Brands SAC
+  { id: 401, supplierId: 4, fileName: "global_brands_abril.xlsx", uploadedAt: "2026-04-27 16:15", totalRows: 312, newProducts: 287, duplicates: 22, errors: 3, status: "completed", uploadedBy: "Ana García" },
+  { id: 402, supplierId: 4, fileName: "perfumeria_premium.xlsx", uploadedAt: "2026-04-14 12:00", totalRows: 87, newProducts: 79, duplicates: 8, errors: 0, status: "completed", uploadedBy: "Ana García" },
+  { id: 403, supplierId: 4, fileName: "snacks_familia.csv", uploadedAt: "2026-03-25 14:40", totalRows: 145, newProducts: 132, duplicates: 11, errors: 2, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 404, supplierId: 4, fileName: "fitness_q1.xlsx", uploadedAt: "2026-04-28 09:30", totalRows: 67, newProducts: 0, duplicates: 0, errors: 0, status: "processing", uploadedBy: "Ana García" },
+
+  // Supplier 5 — Proveedora Nacional SRL
+  { id: 501, supplierId: 5, fileName: "nacional_febrero.xlsx", uploadedAt: "2026-02-10 10:30", totalRows: 45, newProducts: 38, duplicates: 5, errors: 2, status: "completed", uploadedBy: "Carlos Mendoza" },
+  { id: 502, supplierId: 5, fileName: "lote_enero_2026.csv", uploadedAt: "2026-01-22 13:15", totalRows: 23, newProducts: 20, duplicates: 3, errors: 0, status: "completed", uploadedBy: "Ana García" },
 ];
 
 export const categories: Category[] = [
