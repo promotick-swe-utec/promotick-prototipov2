@@ -566,42 +566,41 @@ export default function CategoriasPage() {
   return (
     <div>
       {/* ── Page header ── */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
-            <FolderTree className="h-5 w-5 text-brand-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Categorías y Subcategorías
-            </h1>
-            <p className="mt-0.5 text-sm text-gray-500">
-              Estructura jerárquica del catálogo maestro de productos
-            </p>
-          </div>
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+          <FolderTree className="h-5 w-5 text-brand-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Categorías y Subcategorías
+          </h1>
+          <p className="mt-0.5 text-sm text-gray-500">
+            Estructura jerárquica del catálogo maestro de productos
+          </p>
+        </div>
+      </div>
+
+      {/* ── Filter + action row ── */}
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar categoría o subcategoría"
+            className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-700 outline-none transition-colors placeholder:text-gray-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+          />
         </div>
 
-        <div className="flex flex-col gap-3 sm:min-w-[420px] sm:items-end">
-          <div className="relative w-full sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar categoría o subcategoría"
-              className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-700 outline-none transition-colors placeholder:text-gray-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={openCreateCategoryModal}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-          >
-            <Plus className="h-4 w-4" />
-            Nueva Categoría
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={openCreateCategoryModal}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
+        >
+          <Plus className="h-4 w-4" />
+          Nueva Categoría
+        </button>
       </div>
 
       {/* ── Summary bar ── */}

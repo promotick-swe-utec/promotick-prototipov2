@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Upload,
+  UploadCloud,
   FileSpreadsheet,
   Sparkles,
   ArrowRight,
@@ -728,13 +729,18 @@ function CargarPlantillaInner() {
   return (
     <div>
       {/* Page heading */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Cargar Plantilla de Proveedor
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Sube un archivo Excel, mapea las columnas y procesa los productos
-        </p>
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+          <UploadCloud className="h-5 w-5 text-brand-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Cargar Plantilla de Proveedor
+          </h1>
+          <p className="mt-0.5 text-sm text-gray-500">
+            Sube un archivo Excel, mapea las columnas y procesa los productos
+          </p>
+        </div>
       </div>
 
       {/* Step indicator */}

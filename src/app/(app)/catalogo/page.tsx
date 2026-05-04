@@ -143,12 +143,15 @@ export default function CatalogoPage() {
   return (
     <div>
       {/* ── Page header ── */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50">
+          <Package className="h-5 w-5 text-brand-600" />
+        </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
             Catálogo de Productos
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-0.5 text-sm text-gray-500">
             Gestiona y consulta todos los productos del catálogo maestro
           </p>
         </div>
