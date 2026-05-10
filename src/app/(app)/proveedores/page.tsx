@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, Fragment } from "react";
+import { useState, useMemo, Fragment, useRef } from "react";
 import {
   Search,
   Plus,
@@ -13,6 +13,8 @@ import {
   ArrowUp,
   ArrowDown,
   Truck,
+  UploadCloud,
+  X,
 } from "lucide-react";
 import { suppliers, products, type Supplier } from "@/lib/mock-data";
 import Link from "next/link";
@@ -83,6 +85,8 @@ export default function ProveedoresPage() {
     isActive: true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [templateFile, setTemplateFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Validations
   const validateForm = (): boolean => {
@@ -141,6 +145,17 @@ export default function ProveedoresPage() {
       isActive: true,
     });
     setErrors({});
+    setTemplateFile(null);
+  }
+
+  function handleTemplateChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (f) setTemplateFile(f);
+  }
+
+  function clearTemplate() {
+    setTemplateFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function handleSort(key: "cargas" | "ultimaCarga" | "estado") {
@@ -580,6 +595,53 @@ export default function ProveedoresPage() {
                   <span className="text-sm font-medium text-gray-700">Activo</span>
                 </label>
               </div>
+
+              {/* Plantilla (opcional) */}
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Plantilla del proveedor <span className="text-gray-400 font-normal">(opcional)</span>
+                </label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls,.csv"
+                  onChange={handleTemplateChange}
+                  className="hidden"
+                  id="supplier-template-input"
+                />
+                {!templateFile ? (
+                  <label
+                    htmlFor="supplier-template-input"
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-4 text-sm text-gray-600 transition-colors hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700"
+                  >
+                    <UploadCloud className="h-5 w-5" />
+                    <span>Subir plantilla (.xlsx, .xls, .csv)</span>
+                  </label>
+                ) : (
+                  <div className="flex items-center justify-between gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <FileText className="h-4 w-4 shrink-0 text-brand-600" />
+                      <span className="truncate text-sm text-gray-800" title={templateFile.name}>
+                        {templateFile.name}
+                      </span>
+                      <span className="shrink-0 text-xs text-gray-500">
+                        {(templateFile.size / 1024).toFixed(1)} KB
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={clearTemplate}
+                      title="Quitar plantilla"
+                      className="rounded p-1 text-gray-500 hover:bg-white hover:text-red-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+                <p className="mt-1 text-xs text-gray-400">
+                  Adjunta la plantilla Excel/CSV asociada a este proveedor.
+                </p>
+              </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -587,6 +649,7 @@ export default function ProveedoresPage() {
                 onClick={() => {
                   setIsFormOpen(false);
                   setErrors({});
+                  setTemplateFile(null);
                 }}
                 className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
