@@ -254,10 +254,10 @@ export const productPrices: Record<number, ProductPrice[]> = {
 };
 
 export const clients: Client[] = [
-  { id: 1, name: "Tienda Ripley Web", type: "web_app", description: "Portal de canje Ripley Puntos Go", pointsConversionFactor: 12.85, isActive: true, categoriesCount: 24, hasOutputTemplate: true, contactEmail: "contacto@ripleyweb.pe", contactPhone: "+51 1 300-0000" },
-  { id: 2, name: "NetSuite ERP", type: "erp", description: "Sistema ERP principal para importación de productos", pointsConversionFactor: null, isActive: true, categoriesCount: 0, hasOutputTemplate: true, contactEmail: "soporte@netsuite.local", contactPhone: "+51 1 400-1111" },
-  { id: 3, name: "BBVA Beneficios", type: "web_app", description: "Catálogo de canje BBVA Continental", pointsConversionFactor: 8.50, isActive: true, categoriesCount: 18, hasOutputTemplate: true, contactEmail: "beneficios@bbva.pe", contactPhone: "+51 1 517-0000" },
-  { id: 4, name: "Interbank Vamos", type: "web_app", description: "Programa de beneficios Interbank", pointsConversionFactor: 15.00, isActive: false, categoriesCount: 12, hasOutputTemplate: false, contactEmail: "servicios@interbank.pe", contactPhone: "+51 1 211-0000" },
+  { id: 1, name: "Club Pichincha", type: "web_app", description: "Portal de canje Club Pichincha", pointsConversionFactor: 12.85, isActive: true, categoriesCount: 24, hasOutputTemplate: true, contactEmail: "contacto@ripleyweb.pe", contactPhone: "+51 1 300-0000" },
+  { id: 2, name: "Ria", type: "web_app", description: "Plataforma de remesas y transferencias internacionales Ria", pointsConversionFactor: 10.00, isActive: true, categoriesCount: 15, hasOutputTemplate: true, contactEmail: "contacto@ria.pe", contactPhone: "+51 1 400-1111" },
+  { id: 3, name: "Bago", type: "web_app", description: "Portal de canje de puntos Laboratorios Bago", pointsConversionFactor: 8.50, isActive: true, categoriesCount: 18, hasOutputTemplate: true, contactEmail: "beneficios@bago.pe", contactPhone: "+51 1 517-0000" },
+  { id: 4, name: "Netsuit", type: "erp", description: "Sistema ERP Netsuit para importación de productos", pointsConversionFactor: null, isActive: false, categoriesCount: 12, hasOutputTemplate: false, contactEmail: "soporte@netsuit.local", contactPhone: "+51 1 211-0000" },
 ];
 
 export const clientCategories: ClientCategory[] = [
@@ -270,10 +270,10 @@ export const clientCategories: ClientCategory[] = [
 ];
 
 export const exportJobs: ExportJob[] = [
-  { id: 1, clientName: "Tienda Ripley Web", fileName: "ripley_catalogo_20260427.xlsx", totalProducts: 156, status: "completed", generatedBy: "Ana García", createdAt: "2026-04-27 10:30", completedAt: "2026-04-27 10:32" },
-  { id: 2, clientName: "NetSuite ERP", fileName: "netsuite_import_20260425.csv", totalProducts: 42, status: "completed", generatedBy: "Carlos Mendoza", createdAt: "2026-04-25 14:15", completedAt: "2026-04-25 14:16" },
-  { id: 3, clientName: "BBVA Beneficios", fileName: "bbva_catalogo_20260424.xlsx", totalProducts: 89, status: "completed", generatedBy: "Ana García", createdAt: "2026-04-24 09:00", completedAt: "2026-04-24 09:03" },
-  { id: 4, clientName: "Tienda Ripley Web", fileName: "ripley_catalogo_20260428.xlsx", totalProducts: 0, status: "processing", generatedBy: "Carlos Mendoza", createdAt: "2026-04-28 08:45", completedAt: null },
+  { id: 1, clientName: "Club Pichincha", fileName: "ripley_catalogo_20260427.xlsx", totalProducts: 156, status: "completed", generatedBy: "Ana García", createdAt: "2026-04-27 10:30", completedAt: "2026-04-27 10:32" },
+  { id: 2, clientName: "Ria", fileName: "netsuite_import_20260425.csv", totalProducts: 42, status: "completed", generatedBy: "Carlos Mendoza", createdAt: "2026-04-25 14:15", completedAt: "2026-04-25 14:16" },
+  { id: 3, clientName: "Bago", fileName: "bbva_catalogo_20260424.xlsx", totalProducts: 89, status: "completed", generatedBy: "Ana García", createdAt: "2026-04-24 09:00", completedAt: "2026-04-24 09:03" },
+  { id: 4, clientName: "Club Pichincha", fileName: "ripley_catalogo_20260428.xlsx", totalProducts: 0, status: "processing", generatedBy: "Carlos Mendoza", createdAt: "2026-04-28 08:45", completedAt: null },
 ];
 
 export const appUsers: AppUser[] = [

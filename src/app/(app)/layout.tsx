@@ -15,7 +15,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     {
       id: 1,
       title: "Catálogo exportado exitosamente",
-      description: "El catálogo para Tienda Ripley Web se exportó correctamente.",
+      description: "El catálogo para Club Pichincha se exportó correctamente.",
       time: "Hace 2 minutos",
     },
   ]);

@@ -53,7 +53,7 @@ const navigation: NavSection[] = [
   {
     title: "CONFIGURACIÓN",
     items: [
-      { label: "Clientes", href: "/clientes", icon: Building2 },
+      { label: "Plataformas", href: "/clientes", icon: Building2 },
       { label: "Usuarios", href: "/usuarios", icon: Users, adminOnly: true },
     ],
   },

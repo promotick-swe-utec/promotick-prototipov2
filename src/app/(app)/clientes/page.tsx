@@ -278,10 +278,10 @@ export default function ClientesPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Gestión de Clientes
+              Gestión de Plataformas
             </h1>
             <p className="mt-0.5 text-sm text-gray-500">
-              Administra los clientes, sus categorías y plantillas de salida
+              Administra las plataformas, sus categorías y plantillas de salida
             </p>
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function ClientesPage() {
             className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
           >
             <Plus className="h-4 w-4" />
-            Nuevo Cliente
+            Nueva Plataforma
           </button>
         </div>
       </div>
@@ -434,7 +434,7 @@ export default function ClientesPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             type="button"
-                            title="Editar cliente"
+                            title="Editar plataformas"
                             onClick={() => openEditClient(c)}
                             className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                           >
@@ -507,7 +507,7 @@ export default function ClientesPage() {
             <span className="font-medium text-gray-900">
               {list.length}
             </span>{" "}
-            clientes
+            plataformas
           </p>
         </div>
       </div>
@@ -516,7 +516,7 @@ export default function ClientesPage() {
       {isCreating && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <form onSubmit={handleCreateClient} className="w-full max-w-lg rounded-lg bg-white p-6">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900">Nuevo Cliente</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-900">Nueva Plataforma</h3>
             {successMessage && (
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{successMessage}</div>
             )}

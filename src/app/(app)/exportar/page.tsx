@@ -105,7 +105,7 @@ export default function ExportarPage() {
 
   const selectedClientName =
     activeClients.find((c) => c.id === Number(selectedClient))?.name ||
-    "Tienda Ripley Web";
+    "Club Pichincha";
 
   return (
     <div>

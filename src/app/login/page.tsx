@@ -85,7 +85,7 @@ export default function LoginPage() {
 
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-gray-400">
             Administra tu catálogo, gestiona proveedores y exporta a
-            múltiples clientes desde una sola plataforma.
+            múltiples plataformas desde una sola plataforma.
           </p>
         </div>
       </div>
