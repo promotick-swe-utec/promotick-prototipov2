@@ -51,7 +51,7 @@ export default function PlantillaSalidaPage() {
   if (!client) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-gray-500">Cliente no encontrado.</p>
+        <p className="text-gray-500">Plataforma no encontrada.</p>
       </div>
     );
   }
@@ -62,10 +62,10 @@ export default function PlantillaSalidaPage() {
       <div className="mb-6">
         <div className="mb-3 flex items-center gap-2 text-sm text-gray-500">
           <Link
-            href="/clientes"
+            href="/plataformas"
             className="transition-colors hover:text-brand-600"
           >
-            Clientes
+            Plataformas
           </Link>
           <span>/</span>
           <span className="text-gray-700">{client.name}</span>
@@ -78,7 +78,7 @@ export default function PlantillaSalidaPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/clientes"
+              href="/plataformas"
               className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700"
             >
               <ArrowLeft className="h-5 w-5" />

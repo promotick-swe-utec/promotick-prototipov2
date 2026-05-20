@@ -119,8 +119,8 @@ export default function ExportarPage() {
             Generar Plantilla de Salida
           </h1>
           <p className="mt-0.5 text-sm text-gray-500">
-            Exporta el catálogo de productos según la configuración del
-            cliente seleccionado
+            Exporta el catálogo de productos según la configuración de la
+            plataforma seleccionada
           </p>
         </div>
       </div>
@@ -138,15 +138,15 @@ export default function ExportarPage() {
           {/* Client selector */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Cliente
+              Plataforma
             </label>
             <select
               value={selectedClient}
               onChange={(e) => setSelectedClient(e.target.value)}
-              aria-label="Seleccionar cliente"
+              aria-label="Seleccionar plataforma"
               className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             >
-              <option value="">Seleccionar cliente...</option>
+              <option value="">Seleccionar plataforma...</option>
               {activeClients.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -323,7 +323,7 @@ export default function ExportarPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/60 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                <th className="py-3.5 pl-6 pr-3">Cliente</th>
+                <th className="py-3.5 pl-6 pr-3">Plataforma</th>
                 <th className="px-3 py-3.5">Archivo</th>
                 <th className="px-3 py-3.5 text-center">Productos</th>
                 <th className="px-3 py-3.5 text-center">Estado</th>

@@ -163,7 +163,7 @@ export default function ClientesPage() {
       editForm.contactEmail &&
       list.some((c) => c.contactEmail === editForm.contactEmail && c.id !== editClientId)
     ) {
-      errors.contactEmail = "Ya existe un cliente con ese email";
+      errors.contactEmail = "Ya existe una plataforma con ese email";
     }
 
     if (editForm.contactPhone && !isValidPhone(editForm.contactPhone)) {
@@ -179,7 +179,7 @@ export default function ClientesPage() {
 
     const updated: Client = {
       id: editClientId,
-      name: editForm.name || `Cliente ${editClientId}`,
+      name: editForm.name || `Plataforma ${editClientId}`,
       type: (editForm.type as Client["type"]) || "web_app",
       description: editForm.description || "",
       pointsConversionFactor:
@@ -197,7 +197,7 @@ export default function ClientesPage() {
     setIsEditing(false);
     resetEditForm();
     setEditSubmitAttempt(false);
-    setSuccessMessage("Cliente actualizado correctamente");
+    setSuccessMessage("Plataforma actualizada correctamente");
     setTimeout(() => setSuccessMessage(null), 3000);
   }
 
@@ -221,7 +221,7 @@ export default function ClientesPage() {
     const nextId = Math.max(0, ...list.map((c) => c.id)) + 1;
     const newClient: Client = {
       id: nextId,
-      name: form.name || `Cliente ${nextId}`,
+      name: form.name || `Plataforma ${nextId}`,
       type: (form.type as Client["type"]) || "web_app",
       description: form.description || "",
       pointsConversionFactor:
@@ -238,7 +238,7 @@ export default function ClientesPage() {
     resetForm();
     setFormErrors({});
     setClientSubmitAttempt(false);
-    setSuccessMessage("Cliente creado correctamente");
+    setSuccessMessage("Plataforma creada correctamente");
     setTimeout(() => setSuccessMessage(null), 3000);
   }
 
@@ -371,7 +371,7 @@ export default function ClientesPage() {
                     colSpan={8}
                     className="py-12 text-center text-sm text-gray-400"
                   >
-                    No se encontraron clientes con los filtros aplicados.
+                    No se encontraron plataformas con los filtros aplicados.
                   </td>
                 </tr>
               ) : (
@@ -442,7 +442,7 @@ export default function ClientesPage() {
                           </button>
 
                           <Link
-                            href={`/clientes/${c.id}/categorias`}
+                            href={`/plataformas/${c.id}/categorias`}
                             title="Gestionar Categorías"
                             className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
                           >
@@ -450,7 +450,7 @@ export default function ClientesPage() {
                           </Link>
 
                           <Link
-                            href={`/clientes/${c.id}/plantilla-salida`}
+                            href={`/plataformas/${c.id}/plantilla-salida`}
                             title="Configurar Plantilla"
                             className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600"
                           >
@@ -585,7 +585,7 @@ export default function ClientesPage() {
       {isEditing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <form onSubmit={handleUpdateClient} className="w-full max-w-lg rounded-lg bg-white p-6">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900">Editar Cliente</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-900">Editar Plataforma</h3>
             {successMessage && (
               <div className="mb-3 rounded-md bg-green-50 p-2 text-sm font-medium text-green-700">{successMessage}</div>
             )}

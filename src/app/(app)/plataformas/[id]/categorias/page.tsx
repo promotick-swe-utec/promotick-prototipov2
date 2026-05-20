@@ -111,7 +111,7 @@ export default function ClientCategoriasPage() {
   if (!client) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-gray-500">Cliente no encontrado.</p>
+        <p className="text-gray-500">Plataforma no encontrada.</p>
       </div>
     );
   }
@@ -122,10 +122,10 @@ export default function ClientCategoriasPage() {
       <div className="mb-6">
         <div className="mb-3 flex items-center gap-2 text-sm text-gray-500">
           <Link
-            href="/clientes"
+            href="/plataformas"
             className="transition-colors hover:text-brand-600"
           >
-            Clientes
+            Plataformas
           </Link>
           <span>/</span>
           <span className="text-gray-700">{client.name}</span>
@@ -138,7 +138,7 @@ export default function ClientCategoriasPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/clientes"
+              href="/plataformas"
               className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -153,7 +153,7 @@ export default function ClientCategoriasPage() {
                 </h1>
                 <p className="mt-0.5 text-sm text-gray-500">
                   {client.name} — {filteredCategories.length} categorías
-                  del cliente
+                  de la plataforma
                 </p>
               </div>
             </div>
@@ -169,10 +169,10 @@ export default function ClientCategoriasPage() {
           <div className="mb-4 rounded-xl bg-white shadow-sm ring-1 ring-black/5">
             <div className="border-b border-gray-100 px-6 py-4">
               <h2 className="text-base font-semibold text-gray-900">
-                Categorías del Cliente
+                Categorías de la Plataforma
               </h2>
               <p className="mt-0.5 text-sm text-gray-500">
-                Mapea cada categoría del cliente a la estructura maestra de Promotick
+                Mapea cada categoría de la plataforma a la estructura maestra de Promotick
               </p>
             </div>
 
@@ -248,7 +248,7 @@ export default function ClientCategoriasPage() {
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/60 text-xs font-semibold uppercase tracking-wide text-gray-500">
                     <th className="py-3 pl-6 pr-3">
-                      Categoría Cliente
+                      Categoría Plataforma
                     </th>
                     <th className="w-12 px-3 py-3 text-center">&nbsp;</th>
                     <th className="px-3 py-3">

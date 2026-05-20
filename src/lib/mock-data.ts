@@ -257,7 +257,7 @@ export const clients: Client[] = [
   { id: 1, name: "Club Pichincha", type: "web_app", description: "Portal de canje Club Pichincha", pointsConversionFactor: 12.85, isActive: true, categoriesCount: 24, hasOutputTemplate: true, contactEmail: "contacto@ripleyweb.pe", contactPhone: "+51 1 300-0000" },
   { id: 2, name: "Ria", type: "web_app", description: "Plataforma de remesas y transferencias internacionales Ria", pointsConversionFactor: 10.00, isActive: true, categoriesCount: 15, hasOutputTemplate: true, contactEmail: "contacto@ria.pe", contactPhone: "+51 1 400-1111" },
   { id: 3, name: "Bago", type: "web_app", description: "Portal de canje de puntos Laboratorios Bago", pointsConversionFactor: 8.50, isActive: true, categoriesCount: 18, hasOutputTemplate: true, contactEmail: "beneficios@bago.pe", contactPhone: "+51 1 517-0000" },
-  { id: 4, name: "Netsuit", type: "erp", description: "Sistema ERP Netsuit para importación de productos", pointsConversionFactor: null, isActive: false, categoriesCount: 12, hasOutputTemplate: false, contactEmail: "soporte@netsuit.local", contactPhone: "+51 1 211-0000" },
+  { id: 4, name: "Netsuit", type: "erp", description: "Sistema ERP Netsuit para importación de productos", pointsConversionFactor: null, isActive: true, categoriesCount: 12, hasOutputTemplate: false, contactEmail: "soporte@netsuit.local", contactPhone: "+51 1 211-0000" },
 ];
 
 export const clientCategories: ClientCategory[] = [
@@ -300,7 +300,7 @@ export const allPermissions = [
   { code: "product.create", name: "Crear producto", module: "Productos" },
   { code: "product.edit", name: "Editar producto", module: "Productos" },
   { code: "category.manage", name: "Gestionar categorías", module: "Categorías" },
-  { code: "client.manage", name: "Gestionar clientes", module: "Clientes" },
+  { code: "client.manage", name: "Gestionar plataformas", module: "Plataformas" },
   { code: "export.generate", name: "Generar exportación", module: "Exportaciones" },
   { code: "export.view", name: "Ver exportaciones", module: "Exportaciones" },
   { code: "user.manage", name: "Gestionar usuarios", module: "Administración" },
